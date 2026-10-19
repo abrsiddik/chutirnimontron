@@ -1,0 +1,9 @@
+# Changes in the Supabase build
+- Added responsive sign-in screen and saved project URL/public client key settings.
+- Added authenticated admin/staff role awareness; admin-only settings and backup/restore controls.
+- Replaced booking creation/edit/cancel writes with a shared Supabase RPC call; errors prevent local-only saves.
+- Added database-level serialized overlap checks so concurrent staff cannot double-book rooms.
+- Added PostgreSQL tables for profiles, rooms, bookings, payments, and booking history, plus RLS policies.
+- Added Supabase Realtime subscription to refresh booking records across devices.
+- Improved calendar booking bars, mobile layout, status colors, and room cards with category/rate/availability.
+- Preserved Google Sheets sync, CSV export, and JSON backup/restore.

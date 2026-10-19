@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Resort Booking Manager</title>
+<style>
+:root{--bg:#f4f7fb;--card:#fff;--text:#172033;--muted:#687386;--line:#e4e9f1;--primary:#176b5b;--primary2:#e2f4ee;--red:#b42318;--redbg:#fff0ee;--amber:#9a6700;--amberbg:#fff6dc;--blue:#2459a9;--bluebg:#eaf2ff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:var(--text)}button,input,select,textarea{font:inherit}button{cursor:pointer;border:0;border-radius:10px;padding:10px 14px;font-weight:650}.primary{background:var(--primary);color:#fff}.secondary{background:#edf1f6;color:#243047}.danger{background:var(--redbg);color:var(--red)}.app{max-width:1500px;margin:auto;padding:22px}.top{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px}.brand h1{font-size:clamp(22px,3vw,30px);margin:0}.brand p{margin:5px 0 0;color:var(--muted)}.top-actions{display:flex;gap:8px;flex-wrap:wrap}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px}.stat,.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 3px 14px #17203308}.stat{padding:16px}.stat .label{font-size:13px;color:var(--muted)}.stat .value{font-size:clamp(20px,2.5vw,28px);font-weight:800;margin-top:7px;overflow-wrap:anywhere}.stat small{display:block;color:var(--muted);margin-top:5px}.layout{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(300px,1fr);gap:16px;align-items:start}.panel{padding:16px;min-width:0}.panel-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}.panel h2{font-size:18px;margin:0}.month-controls{display:flex;align-items:center;gap:7px}.month-controls strong{min-width:145px;text-align:center}.month-controls button{padding:8px 11px}.calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}.dow{text-align:center;font-size:12px;font-weight:750;color:var(--muted);padding:7px 0}.day{border:1px solid var(--line);background:#fff;border-radius:10px;min-height:94px;padding:7px 6px;text-align:left;min-width:0;color:var(--text);display:flex;flex-direction:column;gap:4px}.day:hover{border-color:#8aa99f}.day.blank{background:transparent;border-color:transparent;pointer-events:none}.day.today{outline:2px solid #78b6a4}.day.selected{border:2px solid var(--primary);padding:6px 5px}.day-num{font-size:13px;font-weight:800}.day-total{font-size:10px;color:var(--primary);font-weight:800;overflow-wrap:anywhere}.dots{display:flex;gap:3px;flex-wrap:wrap}.calendar-bars{display:grid;gap:2px;width:100%;min-width:0}.calendar-bar{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:9px;line-height:1.35;padding:2px 3px;border-radius:4px;background:#e2f4ee;color:#176b5b;font-weight:700}.calendar-bar.tentative{background:#fff6dc;color:#9a6700}.calendar-bar.checked-in{background:#eaf2ff;color:#2459a9}.calendar-bar.checked-out{background:#edf1f6;color:#596579}.calendar-bar.cancelled{background:#fff0ee;color:#b42318}.dot{width:7px;height:7px;border-radius:50%;background:#1e8a70}.dot.due{background:#e39a19}.dot.full{background:#d34b43}.legend{display:flex;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin-top:12px}.legend span{display:flex;align-items:center;gap:5px}.legend i{display:inline-block;width:8px;height:8px;border-radius:50%}.selected-date{font-size:13px;color:var(--muted);margin:0 0 12px}.day-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-bottom:14px}.mini{background:#f6f8fb;border-radius:10px;padding:10px}.mini small{display:block;color:var(--muted);font-size:11px}.mini strong{display:block;font-size:14px;margin-top:4px;overflow-wrap:anywhere}.room-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.room{border:1px solid var(--line);border-radius:11px;padding:10px;min-width:0}.room.booked{background:#f0faf6;border-color:#b9e1d2}.room .room-title{font-weight:800;display:flex;justify-content:space-between;gap:5px}.pill{font-size:10px;border-radius:999px;padding:3px 6px;background:#edf1f6;color:#586275;white-space:nowrap}.pill.booked{background:var(--primary2);color:var(--primary)}.room .guest{font-size:12px;color:var(--muted);margin-top:6px;overflow-wrap:anywhere}.room .due{font-size:12px;margin-top:6px;font-weight:750}.room-actions{display:flex;gap:5px;margin-top:8px}.room-actions button{font-size:11px;padding:6px 8px}.table-wrap{overflow:auto}table{border-collapse:collapse;width:100%;font-size:13px}th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);white-space:nowrap}th{color:var(--muted);font-weight:700;background:#fafbfd}.table-empty{text-align:center;color:var(--muted);padding:22px}.side-stack{display:grid;gap:16px}.year-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.month-chip{border:1px solid var(--line);background:#fff;padding:9px 4px;border-radius:9px;text-align:center;font-size:12px}.month-chip.active{background:var(--primary2);border-color:#a5d6c5;color:var(--primary)}.month-chip small{display:block;margin-top:4px;color:var(--muted);font-size:10px}.notice{font-size:12px;color:var(--muted);line-height:1.5;margin-top:12px}.modal-backdrop{position:fixed;inset:0;background:#10182899;display:none;align-items:center;justify-content:center;padding:16px;z-index:10}.modal-backdrop.show{display:flex}.modal{background:#fff;border-radius:18px;padding:20px;width:min(650px,100%);max-height:92vh;overflow:auto;box-shadow:0 20px 60px #0003}.modal h2{margin:0 0 16px}.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field{display:flex;flex-direction:column;gap:6px}.field.full{grid-column:1/-1}.field label{font-size:12px;font-weight:750;color:#4b5668}.field input,.field select,.field textarea{width:100%;border:1px solid #d6deea;border-radius:9px;padding:10px;background:white;color:var(--text)}.field textarea{resize:vertical;min-height:60px}.modal-actions{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:18px}.modal-actions div{display:flex;gap:8px}.help{font-size:12px;color:var(--muted)}.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#172033;color:white;padding:12px 18px;border-radius:12px;display:none;z-index:20}.toast.show{display:block}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.day{min-height:80px}.day-total{font-size:9px}}
+@media(max-width:520px){.app{padding:12px}.panel{padding:11px}.stats{gap:8px}.stat{padding:12px}.calendar{gap:3px}.day{padding:4px 3px;min-height:66px;border-radius:7px}.day.selected{padding:3px 2px}.day-num{font-size:11px}.day-total{font-size:8px}.dot{width:5px;height:5px}.room-list{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.year-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.month-controls strong{min-width:112px;font-size:13px}.dow{font-size:10px}}
+.filters{display:grid;grid-template-columns:2fr repeat(4,minmax(120px,1fr));gap:8px;margin:10px 0 14px}.filters input,.filters select{min-width:0;width:100%;padding:9px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--text)}.room-options{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}.room-options label{display:flex;align-items:center;gap:5px;border:1px solid var(--line);border-radius:8px;padding:7px;font-size:12px}.price-preview{background:#f2f8f6;border-radius:10px;padding:10px;font-size:13px;line-height:1.6}.row-actions{display:flex;gap:5px}.row-actions button{padding:6px 8px;font-size:11px}.status-cancelled{color:#b42318}@media(max-width:900px){.filters{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:520px){.filters{grid-template-columns:1fr}.room-options{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.status-booked{color:#176b5b;background:#e2f4ee}.status-tentative{color:#9a6700;background:#fff6dc}.status-checked-in{color:#2459a9;background:#eaf2ff}.status-checked-out{color:#596579;background:#edf1f6}.status-cancelled{color:#b42318;background:#fff0ee}
+.room .room-meta{font-size:11px;color:var(--muted);margin-top:4px}.top-actions button{min-height:42px}.day:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #8bbeb0;outline-offset:2px}
+.auth-screen{position:fixed;inset:0;z-index:100;background:linear-gradient(135deg,#eaf5f1,#f4f7fb 55%,#e8eef8);display:flex;align-items:center;justify-content:center;padding:18px}.auth-card{width:min(440px,100%);background:white;border:1px solid var(--line);border-radius:22px;padding:26px;box-shadow:0 22px 70px #142d2b1a}.auth-card h1{margin:0 0 6px;font-size:25px}.auth-card .field{margin-top:12px}.auth-card .primary{width:100%;margin-top:14px;min-height:44px}.auth-message{font-size:12px;color:var(--muted);line-height:1.5;margin-top:12px}.connection-pill{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;background:#e2f4ee;color:#176b5b;font-size:12px;font-weight:750}.hidden{display:none!important}
+@media(max-width:760px){.layout{grid-template-columns:1fr}.top{align-items:flex-start}.top-actions{width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.top-actions button{width:100%;padding:10px 8px;font-size:12px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.calendar{gap:3px}.day{min-height:75px}.panel{border-radius:13px}.auth-card{padding:20px}}
+</style>
+</head>
+<body>
+<div class="auth-screen" id="authScreen">
+  <section class="auth-card">
+    <h1>Resort Booking Manager</h1><p class="help">Secure team sign-in · Shared Supabase database</p>
+    <div class="field"><label for="authSupabaseUrl">Supabase project URL</label><input id="authSupabaseUrl" type="url" placeholder="https://your-project.supabase.co" autocomplete="url"></div>
+    <div class="field"><label for="authSupabaseKey">Supabase publishable / anon key</label><input id="authSupabaseKey" type="password" placeholder="sb_publishable_… or anon key" autocomplete="off"></div>
+    <div class="field"><label for="authEmail">Work email</label><input id="authEmail" type="email" placeholder="staff@yourresort.com" autocomplete="username"></div>
+    <div class="field"><label for="authPassword">Password</label><input id="authPassword" type="password" placeholder="Your account password" autocomplete="current-password"></div>
+    <button class="primary" id="signInBtn">Sign in securely</button>
+    <p class="auth-message" id="authMessage">Enter your Supabase project URL and public client key. User accounts must be created by an administrator in Supabase Authentication. Database access is controlled by role-based policies.</p>
+  </section>
+</div>
+<div class="app" id="mainApp">
+  <header class="top">
+    <div class="brand"><h1 id="resortTitle">Resort Booking Manager</h1><p>16 rooms · Yearly calendar · Booking payments & dues</p></div>
+    <div class="top-actions">
+      <span class="connection-pill" id="connectionPill">Connecting…</span><button class="secondary" id="settingsBtn">Settings & Sheets sync</button><button class="secondary" id="signOutBtn">Sign out</button>
+      <button class="secondary" id="exportBtn">Export CSV</button>
+      <button class="secondary" id="backupBtn">Backup data</button>
+      <button class="secondary" id="restoreOpenBtn">Restore backup</button>
+      <button class="primary" id="addBtn">＋ Add booking</button>
+    </div>
+  </header>
+  <section class="stats">
+    <div class="stat"><div class="label">Booking revenue · selected month</div><div class="value" id="monthRevenue">৳0</div><small id="monthRevenueSub">0 bookings</small></div>
+    <div class="stat"><div class="label">Money received · selected month</div><div class="value" id="monthPaid">৳0</div><small>Payments allocated to stays in this month</small></div>
+    <div class="stat"><div class="label">Due amount · selected month</div><div class="value" id="monthDue">৳0</div><small>Outstanding amount for stays in this month</small></div>
+    <div class="stat"><div class="label">All 16 rooms · selected month</div><div class="value" id="occupancy">0 / 16</div><small id="occupancySub">Room-nights occupied today</small></div>
+  </section>
+  <div class="layout">
+    <main class="panel">
+      <div class="panel-head">
+        <h2>Booking calendar</h2>
+        <div class="month-controls"><button class="secondary" id="prevMonth" aria-label="Previous month">‹</button><strong id="monthLabel"></strong><button class="secondary" id="nextMonth" aria-label="Next month">›</button></div>
+      </div>
+      <div class="calendar" id="calendar"></div>
+      <div class="legend"><span><i style="background:#1e8a70"></i>Booked room</span><span><i style="background:#e39a19"></i>Has due</span><span><i style="background:#d34b43"></i>Fully booked (16 rooms)</span></div>
+      <p class="notice">Select any date to see room availability and the money due for that day. Double booking is blocked: the same room cannot have overlapping active bookings. Check-in is included and check-out is not occupied, so back-to-back stays are allowed.</p>
+      <div class="panel-head" style="margin-top:22px"><h2>Year overview</h2><select id="yearSelect" aria-label="Select year" style="padding:8px;border:1px solid var(--line);border-radius:9px"></select></div>
+      <div class="year-grid" id="yearGrid"></div>
+    </main>
+    <aside class="side-stack">
+      <section class="panel">
+        <div class="panel-head"><h2 id="selectedDateHeading">Selected day</h2><button class="primary" id="addDayBtn">＋ Book room</button></div>
+        <p class="selected-date" id="selectedDateSub"></p>
+        <div class="day-summary">
+          <div class="mini"><small>Booking total</small><strong id="dayRevenue">৳0</strong></div>
+          <div class="mini"><small>Received</small><strong id="dayPaid">৳0</strong></div>
+          <div class="mini"><small>Due</small><strong id="dayDue">৳0</strong></div>
+        </div>
+        <div class="room-list" id="roomList"></div>
+      </section>
+      <section class="panel">
+        <div class="panel-head"><h2>Upcoming check-ins</h2><span class="pill" id="upcomingCount">0</span></div>
+        <div class="table-wrap"><table><thead><tr><th>Date</th><th>Room / Guest</th><th>Due</th></tr></thead><tbody id="upcomingBody"></tbody></table></div>
+      </section>
+      <section class="panel">
+        <div class="panel-head"><h2>Upcoming departures</h2><span class="pill" id="departureCount">0</span></div>
+        <div class="table-wrap"><table><thead><tr><th>Check-out</th><th>Room / Guest</th><th>Status</th></tr></thead><tbody id="departuresBody"></tbody></table></div>
+      </section>
+      <section class="panel">
+        <div class="panel-head"><h2>Overdue check-outs</h2><span class="pill" id="overdueCount">0</span></div>
+        <div class="table-wrap"><table><thead><tr><th>Check-out</th><th>Room / Guest</th><th>Due</th></tr></thead><tbody id="overdueBody"></tbody></table></div>
+      </section>
+      <section class="panel">
+        <div class="panel-head"><h2>All bookings · year</h2><button class="secondary" id="allBookingsBtn">View list</button></div>
+        <div class="day-summary">
+          <div class="mini"><small>Revenue</small><strong id="yearRevenue">৳0</strong></div>
+          <div class="mini"><small>Received</small><strong id="yearPaid">৳0</strong></div>
+          <div class="mini"><small>Due</small><strong id="yearDue">৳0</strong></div>
+        </div>
+        <p class="notice">Year totals include bookings whose check-in date falls within the selected year. Data is saved in this browser on this device. Use Backup data regularly to keep a copy.</p>
+      </section>
+    </aside>
+  </div>
+  <section class="panel" id="bookingTablePanel" style="margin-top:16px;display:none">
+    <div class="panel-head"><h2>Booking records</h2><button class="secondary" id="hideListBtn">Hide list</button></div>
+    <div class="filters"><input id="searchBookings" placeholder="Search guest, phone, or booking ID"><select id="filterRoom"><option value="">All rooms</option></select><input id="filterDate" type="date" title="Bookings active on this date"><select id="filterStatus"><option value="">All statuses</option><option>Booked</option><option>Tentative</option><option>Checked-in</option><option>Checked-out</option><option>Cancelled</option></select><button class="secondary" id="clearFilters">Clear filters</button></div>
+    <div class="table-wrap"><table><thead><tr><th>Booking ID</th><th>Check-in</th><th>Check-out</th><th>Room(s)</th><th>Guest</th><th>Phone</th><th>Total</th><th>Paid</th><th>Due</th><th>Status</th><th>Actions</th></tr></thead><tbody id="bookingBody"></tbody></table></div>
+  </section>
+</div>
+
+<div class="modal-backdrop" id="bookingModal">
+  <div class="modal">
+    <h2 id="modalTitle">Add booking</h2>
+    <form id="bookingForm">
+      <input type="hidden" id="bookingId">
+      <div class="form-grid">
+        <div class="field full"><label>Rooms in this reservation * (select one or more)</label><div class="room-options" id="roomOptions"></div><input type="hidden" id="roomSelect" value="1"></div>
+        <div class="field"><label for="guestName">Guest name *</label><input id="guestName" required placeholder="Guest full name"></div>
+        <div class="field"><label for="phone">Phone number</label><input id="phone" type="tel" placeholder="01XXXXXXXXX"></div>
+        <div class="field"><label for="guestType">Booking type</label><select id="guestType"><option>Couple</option><option>Family</option><option>Friends</option><option>Other</option></select></div>
+        <div class="field"><label for="checkIn">Check-in *</label><input id="checkIn" type="date" required></div>
+        <div class="field"><label for="checkOut">Check-out *</label><input id="checkOut" type="date" required></div>
+        <div class="field"><label for="nightlyRate">Rate per room / night (৳) *</label><input id="nightlyRate" type="number" min="0" step="any" required placeholder="3000"></div>
+        <div class="field"><label for="discountAmount">Discount (৳)</label><input id="discountAmount" type="number" min="0" step="1" value="0"></div>
+        <div class="field full"><div class="price-preview" id="pricePreview">Nights: 1 · Rooms: 1 · Subtotal: ৳0 · Discount: ৳0 · Total: ৳0</div></div>
+        <input type="hidden" id="totalAmount" value="0">
+        <div class="field"><label for="paidAmount">Total received (৳)</label><input id="paidAmount" type="number" min="0" step="1" value="0" placeholder="2000"></div>
+        <div class="field"><label for="status">Booking status</label><select id="status"><option value="Booked">Booked</option><option value="Tentative">Tentative</option><option value="Checked-in">Checked-in</option><option value="Checked-out">Checked-out</option><option value="Cancelled">Cancelled</option></select></div>
+        <div class="field"><label for="paymentNote">Payment method / note</label><input id="paymentNote" placeholder="bKash, cash, bank..."></div>
+        <div class="field full"><label for="notes">Notes</label><textarea id="notes" placeholder="Special requests or additional details"></textarea></div>
+      </div>
+      <p class="help" id="formDue">Due amount: ৳0</p>
+      <p class="help" id="overlapWarning" style="color:#b42318"></p>
+      <div class="modal-actions"><button type="button" class="danger" id="deleteBookingBtn" style="display:none">Delete booking</button><div><button type="button" class="secondary" id="cancelModal">Cancel</button><button type="submit" class="primary">Save booking</button></div></div>
+    </form>
+  </div>
+</div>
+<div class="modal-backdrop" id="settingsModal">
+  <div class="modal" style="max-width:560px"><h2>Resort settings & integrations</h2>
+    <h3 style="margin:0 0 6px;font-size:16px">Supabase shared database</h3><p class="help">The URL and publishable/anon key identify your project; never place a service-role key in this HTML. Sign in again after changing project settings.</p><div class="field"><label for="settingsSupabaseUrl">Supabase project URL</label><input id="settingsSupabaseUrl" type="url" placeholder="https://your-project.supabase.co"></div><div class="field" style="margin-top:10px"><label for="settingsSupabaseKey">Supabase publishable / anon key</label><input id="settingsSupabaseKey" type="password" autocomplete="off"></div><p class="help">Database role: <strong id="currentRoleLabel">Unknown</strong></p><hr style="border:0;border-top:1px solid var(--line);margin:18px 0">
+    <div class="field"><label for="resortNameInput">Resort name</label><input id="resortNameInput" placeholder="Your resort name"></div>
+    <hr style="border:0;border-top:1px solid var(--line);margin:18px 0">
+    <h3 style="margin:0 0 6px;font-size:16px">Google Sheets automation</h3>
+    <p class="help">Syncs booking creation, edits, reschedules, and cancellations to your existing spreadsheet. Paste the deployed Apps Script Web App URL and the same shared secret configured in Apps Script.</p>
+    <div class="field"><label for="sheetsWebAppUrl">Apps Script Web App URL</label><input id="sheetsWebAppUrl" type="url" placeholder="https://script.google.com/macros/s/.../exec" autocomplete="url"></div>
+    <div class="field" style="margin-top:10px"><label for="sheetsSecret">Shared secret</label><input id="sheetsSecret" type="password" placeholder="Use the same secret as in Apps Script" autocomplete="new-password"></div>
+    <p class="help" id="sheetsSyncHelp">Not configured. Booking data remains saved locally until a Web App URL is set.</p>
+    <div class="modal-actions"><button type="button" class="secondary" id="testSheetsBtn">Send test</button><div><button class="secondary" id="cancelSettings">Cancel</button><button class="primary" id="saveSettings">Save settings</button></div></div>
+  </div>
+</div>
+<div class="modal-backdrop" id="importModal">
+  <div class="modal" style="max-width:460px"><h2>Restore backup</h2><p class="help">Choose a JSON backup previously downloaded from this page. This replaces the bookings saved in this browser.</p><div class="field"><label for="backupFile">Backup file</label><input type="file" id="backupFile" accept=".json,application/json"></div><div class="modal-actions"><span></span><div><button class="secondary" id="cancelImport">Cancel</button><button class="primary" id="restoreBtn">Restore backup</button></div></div></div>
+</div>
+<div class="toast" id="toast"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(() => {
+  const KEY='resortBookingManager_v1';
+  const ROOM_COUNT=16;
+  const $=id=>document.getElementById(id);
+  const money=n=>'৳'+Math.round(Number(n)||0).toLocaleString('en-BD');
+  const isoDate=d=>{const x=new Date(d);return `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,'0')}-${String(x.getDate()).padStart(2,'0')}`};
+  const parseDate=s=>{const [y,m,d]=String(s).split('-').map(Number);return new Date(y,m-1,d,12)};
+  const fmtDate=s=>s?parseDate(s).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}):'—';
+  const dateToday=isoDate(new Date());
+  const monthNames=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const fmtMonth=(y,m)=>`${monthNames[m]} ${y}`;
+  let data={resortName:'Resort Booking Manager',bookings:[]};
+  let sheetsConfig={url:'',secret:''};
+  let sb=null, sbUser=null, sbRole=null, realtimeChannel=null, supabaseConfig={url:'',key:''}, remoteReady=false, savingRemote=false, roomCatalog=Array.from({length:16},(_,i)=>({room_number:i+1,category:'Standard',nightly_rate:0,active:true}));
+  let currentYear=new Date().getFullYear(), currentMonth=new Date().getMonth(), selectedDate=dateToday;
+  function load(){try{const x=JSON.parse(localStorage.getItem(KEY)||'null');if(x&&Array.isArray(x.bookings)){data={resortName:x.resortName||'Resort Booking Manager',bookings:x.bookings};}}catch(e){} try{const c=JSON.parse(localStorage.getItem(KEY+'_sheets')||'null');if(c)sheetsConfig={url:c.url||'',secret:c.secret||''};}catch(e){} try{const c=JSON.parse(localStorage.getItem(KEY+'_supabase')||'null');if(c)supabaseConfig={url:c.url||'',key:c.key||''};}catch(e){}}
+  function save(){if(remoteReady)return true;try{localStorage.setItem(KEY,JSON.stringify(data));return true;}catch(e){alert('Browser storage is unavailable or full. Please use Backup data to save a copy, and try opening this file in Safari or Chrome.');return false;}}
+  const dbBooking=b=>({id:b.id,room:Number(b.room)||roomsOf(b)[0]||1,rooms:roomsOf(b),guest_name:b.guestName,phone:b.phone||'',guest_type:b.guestType||'Family',check_in:b.checkIn,check_out:b.checkOut,nightly_rate:Number(b.nightlyRate)||0,discount_amount:Number(b.discountAmount)||0,total_amount:Number(b.totalAmount)||0,paid_amount:Number(b.paidAmount)||0,status:b.status||'Booked',payment_note:b.paymentNote||'',notes:b.notes||'',resort_name:data.resortName||'Resort Booking Manager'});
+  const fromDbBooking=b=>({id:b.id,room:b.room,rooms:b.rooms||[b.room],guestName:b.guest_name,phone:b.phone||'',guestType:b.guest_type||'Family',checkIn:b.check_in,checkOut:b.check_out,nightlyRate:Number(b.nightly_rate)||0,discountAmount:Number(b.discount_amount)||0,totalAmount:Number(b.total_amount)||0,paidAmount:Number(b.paid_amount)||0,status:b.status||'Booked',paymentNote:b.payment_note||'',notes:b.notes||''});
+  function setAuthMessage(msg,error=false){$('authMessage').textContent=msg;$('authMessage').style.color=error?'#b42318':'#687386';}
+  function setAuthScreen(show){$('authScreen').classList.toggle('hidden',!show);$('mainApp').classList.toggle('hidden',show);}
+  function setRoleUI(){ $('connectionPill').textContent=sbUser?`${sbUser.email} · ${sbRole||'staff'}`:'Not connected'; $('currentRoleLabel').textContent=sbRole||'Not signed in'; const admin=sbRole==='admin'; ['settingsBtn','backupBtn','restoreOpenBtn'].forEach(id=>$(id).classList.toggle('hidden',!admin)); }
+  async function initializeSupabase(){
+    if(!supabaseConfig.url||!supabaseConfig.key||!window.supabase){setAuthScreen(true);setAuthMessage('Add your Supabase project URL and publishable/anon key. Run the supplied SQL setup before signing in.');return;}
+    sb=window.supabase.createClient(supabaseConfig.url,supabaseConfig.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+    const {data:sessionData,error}=await sb.auth.getSession();if(error){setAuthMessage(error.message,true);setAuthScreen(true);return;}
+    if(sessionData.session){sbUser=sessionData.session.user;await afterSignIn();}else setAuthScreen(true);
+  }
+  async function signIn(){
+    const url=$('authSupabaseUrl').value.trim()||supabaseConfig.url,key=$('authSupabaseKey').value.trim()||supabaseConfig.key,email=$('authEmail').value.trim(),password=$('authPassword').value;
+    if(!url||!key||!email||!password){setAuthMessage('Enter the project URL, public key, email and password.',true);return;}
+    if(!/^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(url)){setAuthMessage('Please enter a valid Supabase project URL.',true);return;}
+    supabaseConfig={url,key};try{localStorage.setItem(KEY+'_supabase',JSON.stringify(supabaseConfig));}catch(e){}
+    if(!window.supabase){setAuthMessage('Supabase client did not load. Check your internet connection.',true);return;}
+    sb=window.supabase.createClient(url,key,{auth:{persistSession:true,autoRefreshToken:true}});$('signInBtn').disabled=true;$('signInBtn').textContent='Signing in…';
+    const {data:res,error}=await sb.auth.signInWithPassword({email,password});$('signInBtn').disabled=false;$('signInBtn').textContent='Sign in securely';
+    if(error){setAuthMessage(error.message,true);return;}sbUser=res.user;await afterSignIn();
+  }
+  async function afterSignIn(){
+    const {data:profile,error:profileErr}=await sb.from('profiles').select('role,full_name').eq('id',sbUser.id).single();
+    if(profileErr||!profile){await sb.auth.signOut();sbUser=null;setAuthScreen(true);setAuthMessage('Your user profile is missing. Ask an administrator to run the SQL setup and assign your role.',true);return;}
+    sbRole=profile.role;setRoleUI();
+    const {data:roomsData}=await sb.from('rooms').select('*').order('room_number');if(roomsData?.length)roomCatalog=roomsData;
+    const {data:rows,error}=await sb.from('bookings').select('*').order('check_in');
+    if(error){setAuthScreen(true);setAuthMessage('Database access failed: '+error.message,true);return;}
+    data.bookings=(rows||[]).map(fromDbBooking);if(rows&&rows[0]?.resort_name)data.resortName=rows[0].resort_name;remoteReady=true;try{localStorage.removeItem(KEY);}catch(e){}
+    setAuthScreen(false);setup();render();setAuthMessage('Signed in.');
+    if(realtimeChannel)sb.removeChannel(realtimeChannel);
+    realtimeChannel=sb.channel('resort-bookings-live').on('postgres_changes',{event:'*',schema:'public',table:'bookings'},async()=>{if(!savingRemote)await refreshBookings();}).subscribe();
+  }
+  async function refreshBookings(){if(!sb||!remoteReady)return;const {data:rows,error}=await sb.from('bookings').select('*').order('check_in');if(!error){data.bookings=(rows||[]).map(fromDbBooking);save();render();}}
+  async function persistBookingRemote(b,action){
+    if(!sb||!sbUser||!remoteReady)throw new Error('Not connected to the shared database. Sign in again.');
+    savingRemote=true;try{const {data:result,error}=await sb.rpc('save_resort_booking',{p_booking:dbBooking(b),p_action:action});if(error)throw error;return result;}finally{savingRemote=false;}
+  }
+  async function signOut(){if(sb)await sb.auth.signOut();if(realtimeChannel&&sb)sb.removeChannel(realtimeChannel);sbUser=null;sbRole=null;remoteReady=false;data.bookings=[];try{localStorage.removeItem(KEY);}catch(e){}setRoleUI();setAuthScreen(true);setAuthMessage('Signed out. Sign in to access shared bookings.');}
+  function toast(msg){$('toast').textContent=msg;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),2400);}
+  const due=b=>Math.max(0,(+b.totalAmount||0)-(+b.paidAmount||0));
+  const roomsOf=b=>Array.isArray(b.rooms)&&b.rooms.length?b.rooms.map(Number):[Number(b.room)||1];
+  const active=b=>b.status!=='Cancelled';
+  const overlap=(b,date)=>active(b)&&b.checkIn<=date&&date<b.checkOut;
+  const bookingsForDate=date=>data.bookings.filter(b=>overlap(b,date));
+  const bookingForRoom=(room,date,exceptId='')=>data.bookings.find(b=>b.id!==exceptId&&active(b)&&roomsOf(b).includes(+room)&&b.checkIn<date.end&&b.checkOut>date.start);
+  function dateRangeForMonth(y,m){return {start:`${y}-${String(m+1).padStart(2,'0')}-01`,end:isoDate(new Date(y,m+1,1,12))};}
+  function byCheckInYear(y){return data.bookings.filter(b=>active(b)&&b.checkIn.slice(0,4)===String(y));}
+  function sums(list){return list.reduce((a,b)=>{a.revenue+=+b.totalAmount||0;a.paid+=+b.paidAmount||0;a.due+=due(b);return a;},{revenue:0,paid:0,due:0});}
+  function setup(){
+    $('roomOptions').innerHTML=Array.from({length:ROOM_COUNT},(_,i)=>`<label><input type="checkbox" class="room-check" value="${i+1}"> Room ${String(i+1).padStart(2,'0')}</label>`).join('');
+    $('filterRoom').innerHTML='<option value="">All rooms</option>'+Array.from({length:ROOM_COUNT},(_,i)=>`<option value="${i+1}">Room ${String(i+1).padStart(2,'0')}</option>`).join('');
+    const years=new Set([currentYear,currentYear-1,currentYear+1]);data.bookings.forEach(b=>{if(b.checkIn)years.add(+b.checkIn.slice(0,4));});
+    $('yearSelect').innerHTML=[...years].sort((a,b)=>a-b).map(y=>`<option value="${y}">${y}</option>`).join('');
+    $('yearSelect').value=String(currentYear);
+  }
+  function syncBookingToSheets(booking, action){
+    if(!sheetsConfig.url || !sheetsConfig.secret) return;
+    const payload={secret:sheetsConfig.secret,action,booking:{
+      id:booking.id,room:booking.room,rooms:roomsOf(booking),guestName:booking.guestName,phone:booking.phone||'',guestType:booking.guestType||'',
+      checkIn:booking.checkIn,checkOut:booking.checkOut,nightlyRate:booking.nightlyRate??'',discountAmount:booking.discountAmount||0,
+      totalAmount:booking.totalAmount||0,paidAmount:booking.paidAmount||0,dueAmount:due(booking),status:booking.status||'Booked',
+      paymentNote:booking.paymentNote||'',notes:booking.notes||'',resortName:data.resortName||'Resort Booking Manager'
+    }};
+    try{
+      fetch(sheetsConfig.url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload),keepalive:true})
+        .then(()=>{localStorage.setItem(KEY+'_sheets_last',JSON.stringify({time:new Date().toISOString(),action,id:booking.id,result:'sent'}));})
+        .catch(()=>{localStorage.setItem(KEY+'_sheets_last',JSON.stringify({time:new Date().toISOString(),action,id:booking.id,result:'failed'}));});
+    }catch(e){try{localStorage.setItem(KEY+'_sheets_last',JSON.stringify({time:new Date().toISOString(),action,id:booking.id,result:'failed'}));}catch(_){} }
+  }
+  function bookingAction(oldBooking,newBooking){
+    if(!oldBooking)return 'create';
+    if(newBooking.status==='Cancelled' && oldBooking.status!=='Cancelled')return 'cancel';
+    if(oldBooking.checkIn!==newBooking.checkIn||oldBooking.checkOut!==newBooking.checkOut||JSON.stringify(roomsOf(oldBooking))!==JSON.stringify(roomsOf(newBooking)))return 'reschedule';
+    return 'edit';
+  }
+  function render(){
+    $('resortTitle').textContent=data.resortName;
+    $('monthLabel').textContent=fmtMonth(currentYear,currentMonth);
+    $('selectedDateHeading').textContent=parseDate(selectedDate).toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+    $('selectedDateSub').textContent=fmtDate(selectedDate)+' · check-in inclusive, check-out exclusive';
+    renderStats();renderCalendar();renderRooms();renderYearGrid();renderUpcoming();renderBookingsTable();
+  }
+  function renderStats(){
+    const range=dateRangeForMonth(currentYear,currentMonth);
+    const monthList=data.bookings.filter(b=>active(b)&&b.checkIn<range.end&&b.checkOut>range.start);
+    const s=sums(monthList);
+    $('monthRevenue').textContent=money(s.revenue);$('monthPaid').textContent=money(s.paid);$('monthDue').textContent=money(s.due);$('monthRevenueSub').textContent=`${monthList.length} booking${monthList.length===1?'':'s'} overlapping this month`;
+    const dayList=bookingsForDate(dateToday);
+    const occupiedRooms=dayList.reduce((n,b)=>n+roomsOf(b).length,0);$('occupancy').textContent=`${occupiedRooms} / ${ROOM_COUNT}`;$('occupancySub').textContent=`Rooms occupied today · ${Math.round(occupiedRooms/ROOM_COUNT*100)}% occupancy`;
+    const y=sums(byCheckInYear(+ $('yearSelect').value||currentYear));
+    $('yearRevenue').textContent=money(y.revenue);$('yearPaid').textContent=money(y.paid);$('yearDue').textContent=money(y.due);
+    const ds=sums(bookingsForDate(selectedDate));
+    $('dayRevenue').textContent=money(ds.revenue);$('dayPaid').textContent=money(ds.paid);$('dayDue').textContent=money(ds.due);
+  }
+  function renderCalendar(){
+    const first=new Date(currentYear,currentMonth,1,12), days=new Date(currentYear,currentMonth+1,0,12).getDate();
+    let html=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d=>`<div class="dow">${d}</div>`).join('');
+    for(let i=0;i<first.getDay();i++)html+='<div class="day blank"></div>';
+    for(let d=1;d<=days;d++){
+      const date=`${currentYear}-${String(currentMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      const list=bookingsForDate(date), roomCount=list.reduce((n,b)=>n+roomsOf(b).length,0), full=roomCount>=ROOM_COUNT, hasDue=list.some(b=>due(b)>0);
+      const cls=['day',date===dateToday?'today':'',date===selectedDate?'selected':''].filter(Boolean).join(' ');
+      const dots=list.flatMap(b=>roomsOf(b).map(r=>`<i class="dot ${due(b)>0?'due':''}" title="Room ${r}"></i>`)).slice(0,16).join('');
+      const bars=list.slice(0,2).map(b=>`<span class="calendar-bar ${String(b.status||'Booked').toLowerCase().replace(/[^a-z]+/g,'-')}" title="${esc(b.guestName)} · Room ${roomsOf(b).join(', ')}">R${roomsOf(b).join(',')} ${esc(b.guestName)}</span>`).join('');
+      html+=`<button class="${cls}" data-date="${date}"><span class="day-num">${d}</span><span class="day-total">${roomCount?`${roomCount}/16 rooms`:''}</span><div class="calendar-bars">${bars}</div><span class="dots">${dots}</span>${list.length?`<span class="day-total" style="color:${hasDue?'#9a6700':'#687386'}">${money(list.reduce((n,b)=>n+due(b),0))} due</span>`:''}${full?'<span class="pill" style="background:#fff0ee;color:#b42318">Full</span>':''}</button>`;
+    }
+    $('calendar').innerHTML=html;
+    $('calendar').querySelectorAll('[data-date]').forEach(btn=>btn.addEventListener('click',()=>{selectedDate=btn.dataset.date;render();}));
+  }
+  function renderRooms(){
+    const list=bookingsForDate(selectedDate);
+    let html='';
+    for(let room=1;room<=ROOM_COUNT;room++){
+      const b=list.find(x=>roomsOf(x).includes(room));
+      if(b){
+        html+=`<div class="room booked"><div class="room-title">Room ${String(room).padStart(2,'0')} <span class="pill status-${String(b.status||'Booked').toLowerCase().replace(/[^a-z]+/g,'-')}">${esc(b.status||'Booked')}</span></div><div class="room-meta">${esc((roomCatalog.find(r=>+r.room_number===room)||{}).category||'Standard')} · Booking rate: ${money(b.nightlyRate||0)} / night</div><div class="guest">${esc(b.guestName)} · out ${fmtDate(b.checkOut)}${roomsOf(b).length>1?' · '+roomsOf(b).length+' rooms':''}</div><div class="due" style="color:${due(b)>0?'#9a6700':'#176b5b'}">${due(b)>0?money(due(b))+' due':'Fully paid'}</div><div class="room-actions"><button class="secondary" data-edit="${b.id}">Edit</button></div></div>`;
+      }else{
+        html+=`<div class="room"><div class="room-title">Room ${String(room).padStart(2,'0')} <span class="pill status-checked-out">Available</span></div><div class="room-meta">${esc((roomCatalog.find(r=>+r.room_number===room)||{}).category||'Standard')} · ${money((roomCatalog.find(r=>+r.room_number===room)||{}).nightly_rate||0)} / night</div><div class="guest">No booking on this date</div><div class="room-actions"><button class="primary" data-bookroom="${room}">＋ Book</button></div></div>`;
+      }
+    }
+    $('roomList').innerHTML=html;
+    $('roomList').querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>openBooking(b.dataset.edit));
+    $('roomList').querySelectorAll('[data-bookroom]').forEach(b=>b.onclick=()=>openBooking('',+b.dataset.bookroom));
+  }
+  function renderYearGrid(){
+    $('yearGrid').innerHTML=monthNames.map((m,i)=>{
+      const r=dateRangeForMonth(+ $('yearSelect').value||currentYear,i);
+      const n=data.bookings.filter(b=>active(b)&&b.checkIn<r.end&&b.checkOut>r.start).length;
+      return `<button class="month-chip ${i===currentMonth&&(+ $('yearSelect').value||currentYear)===currentYear?'active':''}" data-month="${i}">${m.slice(0,3)}<small>${n} booking${n===1?'':'s'}</small></button>`;
+    }).join('');
+    $('yearGrid').querySelectorAll('[data-month]').forEach(b=>b.onclick=()=>{currentMonth=+b.dataset.month;currentYear=+$('yearSelect').value;selectedDate=`${currentYear}-${String(currentMonth+1).padStart(2,'0')}-01`;render();});
+  }
+  function renderUpcoming(){
+    const upcoming=data.bookings.filter(b=>active(b)&&b.checkIn>=dateToday).sort((a,b)=>a.checkIn.localeCompare(b.checkIn)).slice(0,7);
+    $('upcomingCount').textContent=upcoming.length;
+    $('upcomingBody').innerHTML=upcoming.length?upcoming.map(b=>`<tr><td>${fmtDate(b.checkIn)}</td><td>${roomsOf(b).map(r=>'R'+r).join(', ')} · ${esc(b.guestName)}</td><td style="color:${due(b)>0?'#9a6700':'#176b5b'}">${money(due(b))}</td></tr>`).join(''):'<tr><td colspan="3" class="table-empty">No upcoming check-ins</td></tr>';
+    const departures=data.bookings.filter(b=>active(b)&&b.checkOut>=dateToday).sort((a,b)=>a.checkOut.localeCompare(b.checkOut)).slice(0,7);
+    $('departureCount').textContent=departures.length;
+    $('departuresBody').innerHTML=departures.length?departures.map(b=>`<tr><td>${fmtDate(b.checkOut)}</td><td>${roomsOf(b).map(r=>'R'+r).join(', ')} · ${esc(b.guestName)}</td><td>${esc(b.status)}</td></tr>`).join(''):'<tr><td colspan="3" class="table-empty">No upcoming departures</td></tr>';
+    const overdue=data.bookings.filter(b=>active(b)&&b.status!=='Checked-out'&&b.checkOut<dateToday).sort((a,b)=>a.checkOut.localeCompare(b.checkOut));
+    $('overdueCount').textContent=overdue.length;
+    $('overdueBody').innerHTML=overdue.length?overdue.map(b=>`<tr><td>${fmtDate(b.checkOut)}</td><td>${roomsOf(b).map(r=>'R'+r).join(', ')} · ${esc(b.guestName)}</td><td>${money(due(b))}</td></tr>`).join(''):'<tr><td colspan="3" class="table-empty">No overdue check-outs</td></tr>';
+  }
+  function renderBookingsTable(){
+    const q=$('searchBookings').value.trim().toLowerCase(), roomFilter=$('filterRoom').value, dateFilter=$('filterDate').value, statusFilter=$('filterStatus').value;
+    const list=data.bookings.filter(b=>{
+      const searchable=[b.id,b.guestName,b.phone].join(' ').toLowerCase();
+      return (!q||searchable.includes(q))&&(!roomFilter||roomsOf(b).includes(+roomFilter))&&(!dateFilter||(b.checkIn<=dateFilter&&dateFilter<b.checkOut))&&(!statusFilter||b.status===statusFilter);
+    }).sort((a,b)=>a.checkIn.localeCompare(b.checkIn));
+    $('bookingBody').innerHTML=list.length?list.map(b=>`<tr><td>${esc(b.id)}</td><td>${fmtDate(b.checkIn)}</td><td>${fmtDate(b.checkOut)}</td><td>${roomsOf(b).map(r=>'R'+r).join(', ')}</td><td>${esc(b.guestName)}</td><td>${esc(b.phone||'—')}</td><td>${money(b.totalAmount)}</td><td>${money(b.paidAmount)}</td><td style="color:${due(b)>0?'#9a6700':'#176b5b'}">${money(due(b))}</td><td class="${b.status==='Cancelled'?'status-cancelled':''}">${esc(b.status)}</td><td><div class="row-actions"><button class="secondary" data-edit="${b.id}">Edit</button>${b.status!=='Cancelled'?`<button class="danger" data-cancel="${b.id}">Cancel</button>`:''}</div></td></tr>`).join(''):'<tr><td colspan="11" class="table-empty">No bookings match these filters.</td></tr>';
+    $('bookingBody').querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>openBooking(b.dataset.edit));
+    $('bookingBody').querySelectorAll('[data-cancel]').forEach(btn=>btn.onclick=()=>cancelBooking(btn.dataset.cancel));
+  }
+  function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+  function openBooking(id='',room=1){
+    $('bookingForm').reset();$('bookingId').value='';$('paidAmount').value='0';$('discountAmount').value='0';$('status').value='Booked';$('deleteBookingBtn').style.display='none';$('overlapWarning').textContent='';
+    $('modalTitle').textContent=id?'Edit booking':'Add booking';
+    const b=data.bookings.find(x=>x.id===id);
+    if(b){
+      $('bookingId').value=b.id;$('roomSelect').value=b.room;$('guestName').value=b.guestName;$('phone').value=b.phone||'';$('guestType').value=b.guestType||'Family';$('checkIn').value=b.checkIn;$('checkOut').value=b.checkOut;$('totalAmount').value=b.totalAmount;$('nightlyRate').value=b.nightlyRate??(b.totalAmount/Math.max(1,Math.ceil((parseDate(b.checkOut)-parseDate(b.checkIn))/86400000))/roomsOf(b).length);$('discountAmount').value=b.discountAmount||0;$('paidAmount').value=b.paidAmount;$('status').value=b.status||'Booked';$('paymentNote').value=b.paymentNote||'';$('notes').value=b.notes||'';$('deleteBookingBtn').style.display='inline-block';
+      document.querySelectorAll('.room-check').forEach(c=>c.checked=roomsOf(b).includes(+c.value));
+    }else{
+      $('roomSelect').value=room;$('checkIn').value=selectedDate;$('checkOut').value=isoDate(new Date(parseDate(selectedDate).getTime()+86400000));$('totalAmount').value='';$('nightlyRate').value='';$('guestName').value='';$('phone').value='';$('notes').value='';$('paymentNote').value='';document.querySelectorAll('.room-check').forEach(c=>c.checked=(+c.value===+room));
+    }
+    updateDue();$('bookingModal').classList.add('show');
+  }
+  function selectedRooms(){return [...document.querySelectorAll('.room-check:checked')].map(c=>+c.value).sort((a,b)=>a-b);}
+  function updateDue(){
+    const start=$('checkIn').value,end=$('checkOut').value,rooms=selectedRooms(),rate=+$('nightlyRate').value||0,discount=Math.max(0,+$('discountAmount').value||0),id=$('bookingId').value;
+    const nights=start&&end&&end>start?Math.round((parseDate(end)-parseDate(start))/86400000):0;
+    const subtotal=nights*rate*rooms.length,total=Math.round(Math.max(0,subtotal-discount));
+    $('totalAmount').value=String(total);$('formDue').textContent='Due amount: '+money(Math.max(0,total-(+$('paidAmount').value||0)));
+    $('pricePreview').textContent=`Nights: ${nights} · Rooms: ${rooms.length} · Subtotal: ${money(subtotal)} · Discount: ${money(discount)} · Total: ${money(total)}`;
+    if(start&&end&&start<end&&rooms.length){
+      const collision=data.bookings.find(b=>b.id!==id&&active(b)&&roomsOf(b).some(r=>rooms.includes(r))&&b.checkIn<end&&b.checkOut>start);
+      $('overlapWarning').textContent=collision?`🚫 Selected room(s) overlap with ${collision.guestName} (Room ${roomsOf(collision).join(', ')}, ${collision.checkIn} to ${collision.checkOut}).` : '';
+    }else $('overlapWarning').textContent=rooms.length?'':'Select at least one room.';
+  }
+  function closeModal(){$('bookingModal').classList.remove('show');}
+  $('bookingForm').addEventListener('input',updateDue);$('bookingForm').addEventListener('change',e=>{if(e.target.classList.contains('room-check'))$('roomSelect').value=selectedRooms()[0]||1;updateDue();});
+  $('bookingForm').addEventListener('submit',async e=>{
+    e.preventDefault();
+    const id=$('bookingId').value||('b_'+Date.now()+'_'+Math.random().toString(36).slice(2,7));
+    const rooms=selectedRooms(),checkIn=$('checkIn').value,checkOut=$('checkOut').value,rate=+$('nightlyRate').value||0,discount=Math.max(0,+$('discountAmount').value||0),nights=checkIn&&checkOut&&checkOut>checkIn?Math.round((parseDate(checkOut)-parseDate(checkIn))/86400000):0,totalAmount=Math.round(Math.max(0,nights*rate*rooms.length-discount));
+    if(!rooms.length){alert('Select at least one room.');return;}
+    if(!checkIn||!checkOut||checkOut<=checkIn){alert('Check-out must be later than check-in.');return;}
+    if(discount>nights*rate*rooms.length){if(!confirm('Discount is greater than the subtotal. Total will be ৳0. Continue?'))return;}
+    const b={id,room:rooms[0],rooms,guestName:$('guestName').value.trim(),phone:$('phone').value.trim(),guestType:$('guestType').value,checkIn,checkOut,nightlyRate:rate,discountAmount:discount,totalAmount,paidAmount:+$('paidAmount').value||0,status:$('status').value,paymentNote:$('paymentNote').value.trim(),notes:$('notes').value.trim()};
+    if(b.paidAmount>b.totalAmount){if(!confirm('Received amount is greater than the booking total. Save anyway?'))return;}
+    const collision=data.bookings.find(x=>x.id!==id&&active(x)&&roomsOf(x).some(r=>rooms.includes(r))&&x.checkIn<b.checkOut&&x.checkOut>b.checkIn);
+    if(collision){$('overlapWarning').textContent=`Room overlap with ${collision.guestName}; booking not saved.`;alert(`Double booking blocked!
+
+Selected room(s) overlap with ${collision.guestName} (Room ${roomsOf(collision).join(', ')}) from ${collision.checkIn} to ${collision.checkOut}.`);return;}
+    const i=data.bookings.findIndex(x=>x.id===id),oldBooking=i>=0?JSON.parse(JSON.stringify(data.bookings[i])):null,action=bookingAction(oldBooking,b);
+    try{await persistBookingRemote(b,action);}catch(err){alert('Could not save to the shared database. No local-only booking was created.\n\n'+(err.message||err));return;}
+    if(i>=0)data.bookings[i]=b;else data.bookings.push(b);
+    save();syncBookingToSheets(b,action);closeModal();currentYear=+b.checkIn.slice(0,4);currentMonth=+b.checkIn.slice(5,7)-1;selectedDate=b.checkIn;ensureYear(currentYear);render();toast('Booking saved to shared database');
+  });
+  function ensureYear(y){if(![...$('yearSelect').options].some(o=>+o.value===y)){const o=document.createElement('option');o.value=y;o.textContent=y;$('yearSelect').append(o);} $('yearSelect').value=String(y);}
+  $('deleteBookingBtn').onclick=async()=>{const id=$('bookingId').value;if(id&&confirm('Cancel this booking? It will remain in records but release its room(s).')){const b=data.bookings.find(x=>x.id===id);if(b){const updated={...b,status:'Cancelled'};try{await persistBookingRemote(updated,'cancel');Object.assign(b,updated);save();syncBookingToSheets(b,'cancel');}catch(err){alert('Could not cancel in shared database: '+(err.message||err));return;}}closeModal();render();toast('Booking cancelled');}};
+  async function cancelBooking(id){const b=data.bookings.find(x=>x.id===id);if(b&&confirm(`Cancel booking for ${b.guestName}? This releases its room(s) and keeps the record.`)){const updated={...b,status:'Cancelled'};try{await persistBookingRemote(updated,'cancel');Object.assign(b,updated);save();syncBookingToSheets(b,'cancel');render();toast('Booking cancelled');}catch(err){alert('Could not cancel in shared database: '+(err.message||err));}}}
+  $('cancelModal').onclick=closeModal;
+  $('bookingModal').addEventListener('click',e=>{if(e.target===$('bookingModal'))closeModal();});
+  $('addBtn').onclick=()=>openBooking('',1);$('addDayBtn').onclick=()=>openBooking('',1);
+  $('prevMonth').onclick=()=>{currentMonth--;if(currentMonth<0){currentMonth=11;currentYear--;}ensureYear(currentYear);selectedDate=`${currentYear}-${String(currentMonth+1).padStart(2,'0')}-01`;render();};
+  $('nextMonth').onclick=()=>{currentMonth++;if(currentMonth>11){currentMonth=0;currentYear++;}ensureYear(currentYear);selectedDate=`${currentYear}-${String(currentMonth+1).padStart(2,'0')}-01`;render();};
+  $('yearSelect').onchange=()=>{currentYear=+$('yearSelect').value;selectedDate=`${currentYear}-${String(currentMonth+1).padStart(2,'0')}-01`;render();};
+  $('settingsBtn').onclick=()=>{$('settingsSupabaseUrl').value=supabaseConfig.url;$('settingsSupabaseKey').value=supabaseConfig.key;$('resortNameInput').value=data.resortName;$('sheetsWebAppUrl').value=sheetsConfig.url;$('sheetsSecret').value=sheetsConfig.secret;updateSheetsHelp();$('settingsModal').classList.add('show');};
+  $('cancelSettings').onclick=()=>$('settingsModal').classList.remove('show');
+  function updateSheetsHelp(){
+    let last=null;try{last=JSON.parse(localStorage.getItem(KEY+'_sheets_last')||'null')}catch(e){}
+    $('sheetsSyncHelp').textContent=!sheetsConfig.url?'Not configured. Booking data remains saved locally until a Web App URL is set.':(last?`Configured · last request: ${last.action} · ${new Date(last.time).toLocaleString()} · ${last.result==='failed'?'browser request failed':'request sent (Google response cannot be verified in this browser)'}`:'Configured. No sync request has been sent yet.');
+  }
+  $('saveSettings').onclick=()=>{
+    data.resortName=$('resortNameInput').value.trim()||'Resort Booking Manager';
+    supabaseConfig.url=$('settingsSupabaseUrl').value.trim();supabaseConfig.key=$('settingsSupabaseKey').value.trim();try{localStorage.setItem(KEY+'_supabase',JSON.stringify(supabaseConfig));}catch(e){}
+    sheetsConfig.url=$('sheetsWebAppUrl').value.trim();sheetsConfig.secret=$('sheetsSecret').value.trim();
+    if(sheetsConfig.url && !/^https:\/\/script\.google\.com\/macros\/s\/.+\/exec(?:\?.*)?$/.test(sheetsConfig.url)){alert('Please paste the deployed Google Apps Script Web App URL ending in /exec.');return;}
+    try{localStorage.setItem(KEY+'_sheets',JSON.stringify(sheetsConfig));}catch(e){alert('Could not save sync settings in this browser.');return;}
+    save();$('settingsModal').classList.remove('show');render();toast(sheetsConfig.url?'Settings saved · Google Sheets sync configured':'Resort settings saved');
+  };
+  $('testSheetsBtn').onclick=()=>{
+    const url=$('sheetsWebAppUrl').value.trim(),secret=$('sheetsSecret').value.trim();
+    if(!url||!secret){alert('Enter the Web App URL and shared secret first.');return;}
+    if(!/^https:\/\/script\.google\.com\/macros\/s\/.+\/exec(?:\?.*)?$/.test(url)){alert('Please paste the deployed Google Apps Script Web App URL ending in /exec.');return;}
+    try{fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({secret,action:'test',booking:{resortName:data.resortName}})}).then(()=>toast('Test request sent. Check the Apps Script Executions page to confirm it ran.')).catch(()=>alert('Browser could not send the test request. Check the URL and internet connection.'));}catch(e){alert('Could not send the test request.');}
+  };
+  $('exportBtn').onclick=()=>{
+    const rows=[['Booking ID','Room(s)','Guest','Phone','Type','Check-in','Check-out','Rate/night','Discount','Total amount','Received','Due','Status','Payment note','Notes'],...data.bookings.map(b=>[b.id,roomsOf(b).join('|'),b.guestName,b.phone||'',b.guestType||'',b.checkIn,b.checkOut,b.nightlyRate??'',b.discountAmount||0,b.totalAmount,b.paidAmount,due(b),b.status,b.paymentNote||'',b.notes||''])];
+    const csv=rows.map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\r\n');
+    download(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'}),'resort-bookings.csv');toast('CSV exported');
+  };
+  $('backupBtn').onclick=()=>download(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),'resort-booking-backup.json');
+  function download(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);}
+  $('allBookingsBtn').onclick=()=>{$('bookingTablePanel').style.display='block';$('bookingTablePanel').scrollIntoView({behavior:'smooth',block:'start'});};
+  ['searchBookings','filterRoom','filterDate','filterStatus'].forEach(id=>$(id).addEventListener(id==='searchBookings'?'input':'change',renderBookingsTable));
+  $('clearFilters').onclick=()=>{$('searchBookings').value='';$('filterRoom').value='';$('filterDate').value='';$('filterStatus').value='';renderBookingsTable();};
+  $('hideListBtn').onclick=()=>$('bookingTablePanel').style.display='none';
+  $('restoreOpenBtn').onclick=()=>$('importModal').classList.add('show');
+  $('cancelImport').onclick=()=>$('importModal').classList.remove('show');
+  $('importModal').addEventListener('click',e=>{if(e.target===$('importModal'))$('importModal').classList.remove('show');});
+  $('restoreBtn').onclick=async()=>{
+    const file=$('backupFile').files[0];if(!file){alert('Please select a backup JSON file.');return;}
+    try{const x=JSON.parse(await file.text());if(!x||!Array.isArray(x.bookings))throw new Error('Invalid backup');
+      if(!confirm('Restore this backup to the shared database? Existing bookings not present in the backup will be retained as Cancelled history.'))return;
+      if(remoteReady){const incoming=new Set(x.bookings.map(b=>String(b.id)));const existing=[...data.bookings];for(const old of existing){const cancelled={...old,status:'Cancelled'};await persistBookingRemote(cancelled,'cancel');}for(const b of x.bookings){const normalized={...b,id:String(b.id),rooms:roomsOf(b),room:roomsOf(b)[0]||Number(b.room)||1};await persistBookingRemote(normalized,bookingAction(existing.find(old=>old.id===normalized.id)||null,normalized));}const retained=existing.filter(b=>!incoming.has(String(b.id))).map(b=>({...b,status:'Cancelled'}));data={resortName:x.resortName||'Resort Booking Manager',bookings:[...x.bookings,...retained]};}else{data={resortName:x.resortName||'Resort Booking Manager',bookings:x.bookings};save();} $('importModal').classList.remove('show');
+      const years=new Set([currentYear,currentYear-1,currentYear+1]);data.bookings.forEach(b=>years.add(+b.checkIn.slice(0,4)));
+      $('yearSelect').innerHTML=[...years].sort((a,b)=>a-b).map(y=>`<option value="${y}">${y}</option>`).join('');
+      render();toast('Backup restored');
+    }catch(e){alert('Could not read this backup file. Please select a valid JSON backup.');}
+  };
+  $('signInBtn').onclick=signIn;$('authPassword').addEventListener('keydown',e=>{if(e.key==='Enter')signIn();});$('signOutBtn').onclick=signOut;
+  load();$('authSupabaseUrl').value=supabaseConfig.url;$('authSupabaseKey').value=supabaseConfig.key;setAuthScreen(true);initializeSupabase().catch(e=>{setAuthScreen(true);setAuthMessage(e.message||'Could not initialize Supabase.',true);});
+})();
+</script>
+</body>
+</html>

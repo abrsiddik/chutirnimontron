@@ -20,12 +20,10 @@
 <div class="auth-screen" id="authScreen">
   <section class="auth-card">
     <h1>Resort Booking Manager</h1><p class="help">Secure team sign-in · Shared Supabase database</p>
-    <div class="field"><label for="authSupabaseUrl">Supabase project URL</label><input id="authSupabaseUrl" type="url" placeholder="https://your-project.supabase.co" autocomplete="url"></div>
-    <div class="field"><label for="authSupabaseKey">Supabase publishable / anon key</label><input id="authSupabaseKey" type="password" placeholder="sb_publishable_… or anon key" autocomplete="off"></div>
     <div class="field"><label for="authEmail">Work email</label><input id="authEmail" type="email" placeholder="staff@yourresort.com" autocomplete="username"></div>
     <div class="field"><label for="authPassword">Password</label><input id="authPassword" type="password" placeholder="Your account password" autocomplete="current-password"></div>
     <button class="primary" id="signInBtn">Sign in securely</button>
-    <p class="auth-message" id="authMessage">Enter your Supabase project URL and public client key. User accounts must be created by an administrator in Supabase Authentication. Database access is controlled by role-based policies.</p>
+    <p class="auth-message" id="authMessage">Sign in with the account created for you in Supabase Authentication. Database access is controlled by role-based policies.</p>
   </section>
 </div>
 <div class="app" id="mainApp">
@@ -127,7 +125,7 @@
 </div>
 <div class="modal-backdrop" id="settingsModal">
   <div class="modal" style="max-width:560px"><h2>Resort settings & integrations</h2>
-    <h3 style="margin:0 0 6px;font-size:16px">Supabase shared database</h3><p class="help">The URL and publishable/anon key identify your project; never place a service-role key in this HTML. Sign in again after changing project settings.</p><div class="field"><label for="settingsSupabaseUrl">Supabase project URL</label><input id="settingsSupabaseUrl" type="url" placeholder="https://your-project.supabase.co"></div><div class="field" style="margin-top:10px"><label for="settingsSupabaseKey">Supabase publishable / anon key</label><input id="settingsSupabaseKey" type="password" autocomplete="off"></div><p class="help">Database role: <strong id="currentRoleLabel">Unknown</strong></p><hr style="border:0;border-top:1px solid var(--line);margin:18px 0">
+    <h3 style="margin:0 0 6px;font-size:16px">Supabase shared database</h3><p class="help">This app is connected to your Supabase project. Staff sign in with email and password only.</p><p class="help">Database role: <strong id="currentRoleLabel">Unknown</strong></p><hr style="border:0;border-top:1px solid var(--line);margin:18px 0">
     <div class="field"><label for="resortNameInput">Resort name</label><input id="resortNameInput" placeholder="Your resort name"></div>
     <hr style="border:0;border-top:1px solid var(--line);margin:18px 0">
     <h3 style="margin:0 0 6px;font-size:16px">Google Sheets automation</h3>
@@ -147,6 +145,7 @@
 (() => {
   const KEY='resortBookingManager_v1';
   const ROOM_COUNT=16;
+  const DEFAULT_SUPABASE={url:'https://muconrxfjzmolwhamhsp.supabase.co',key:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im11Y29ucnhmanptb2x3aGFtaHNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI0MzY3MDIsImV4cCI6MjEwODAxMjcwMn0.W5e7IkbRIdLQIeDj5MI2HZ4G7eUF_gCrhuYnEbnp1zQ'};
   const $=id=>document.getElementById(id);
   const money=n=>'৳'+Math.round(Number(n)||0).toLocaleString('en-BD');
   const isoDate=d=>{const x=new Date(d);return `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,'0')}-${String(x.getDate()).padStart(2,'0')}`};
@@ -157,9 +156,9 @@
   const fmtMonth=(y,m)=>`${monthNames[m]} ${y}`;
   let data={resortName:'Resort Booking Manager',bookings:[]};
   let sheetsConfig={url:'',secret:''};
-  let sb=null, sbUser=null, sbRole=null, realtimeChannel=null, supabaseConfig={url:'',key:''}, remoteReady=false, savingRemote=false, roomCatalog=Array.from({length:16},(_,i)=>({room_number:i+1,category:'Standard',nightly_rate:0,active:true}));
+  let sb=null, sbUser=null, sbRole=null, realtimeChannel=null, supabaseConfig={...DEFAULT_SUPABASE}, remoteReady=false, savingRemote=false, roomCatalog=Array.from({length:16},(_,i)=>({room_number:i+1,category:'Standard',nightly_rate:0,active:true}));
   let currentYear=new Date().getFullYear(), currentMonth=new Date().getMonth(), selectedDate=dateToday;
-  function load(){try{const x=JSON.parse(localStorage.getItem(KEY)||'null');if(x&&Array.isArray(x.bookings)){data={resortName:x.resortName||'Resort Booking Manager',bookings:x.bookings};}}catch(e){} try{const c=JSON.parse(localStorage.getItem(KEY+'_sheets')||'null');if(c)sheetsConfig={url:c.url||'',secret:c.secret||''};}catch(e){} try{const c=JSON.parse(localStorage.getItem(KEY+'_supabase')||'null');if(c)supabaseConfig={url:c.url||'',key:c.key||''};}catch(e){}}
+  function load(){try{const x=JSON.parse(localStorage.getItem(KEY)||'null');if(x&&Array.isArray(x.bookings)){data={resortName:x.resortName||'Resort Booking Manager',bookings:x.bookings};}}catch(e){} try{const c=JSON.parse(localStorage.getItem(KEY+'_sheets')||'null');if(c)sheetsConfig={url:c.url||'',secret:c.secret||''};}catch(e){} supabaseConfig={...DEFAULT_SUPABASE};}
   function save(){if(remoteReady)return true;try{localStorage.setItem(KEY,JSON.stringify(data));return true;}catch(e){alert('Browser storage is unavailable or full. Please use Backup data to save a copy, and try opening this file in Safari or Chrome.');return false;}}
   const dbBooking=b=>({id:b.id,room:Number(b.room)||roomsOf(b)[0]||1,rooms:roomsOf(b),guest_name:b.guestName,phone:b.phone||'',guest_type:b.guestType||'Family',check_in:b.checkIn,check_out:b.checkOut,nightly_rate:Number(b.nightlyRate)||0,discount_amount:Number(b.discountAmount)||0,total_amount:Number(b.totalAmount)||0,paid_amount:Number(b.paidAmount)||0,status:b.status||'Booked',payment_note:b.paymentNote||'',notes:b.notes||'',resort_name:data.resortName||'Resort Booking Manager'});
   const fromDbBooking=b=>({id:b.id,room:b.room,rooms:b.rooms||[b.room],guestName:b.guest_name,phone:b.phone||'',guestType:b.guest_type||'Family',checkIn:b.check_in,checkOut:b.check_out,nightlyRate:Number(b.nightly_rate)||0,discountAmount:Number(b.discount_amount)||0,totalAmount:Number(b.total_amount)||0,paidAmount:Number(b.paid_amount)||0,status:b.status||'Booked',paymentNote:b.payment_note||'',notes:b.notes||''});
@@ -167,18 +166,18 @@
   function setAuthScreen(show){$('authScreen').classList.toggle('hidden',!show);$('mainApp').classList.toggle('hidden',show);}
   function setRoleUI(){ $('connectionPill').textContent=sbUser?`${sbUser.email} · ${sbRole||'staff'}`:'Not connected'; $('currentRoleLabel').textContent=sbRole||'Not signed in'; const admin=sbRole==='admin'; ['settingsBtn','backupBtn','restoreOpenBtn'].forEach(id=>$(id).classList.toggle('hidden',!admin)); }
   async function initializeSupabase(){
-    if(!supabaseConfig.url||!supabaseConfig.key||!window.supabase){setAuthScreen(true);setAuthMessage('Add your Supabase project URL and publishable/anon key. Run the supplied SQL setup before signing in.');return;}
+    if(!window.supabase){setAuthScreen(true);setAuthMessage('Supabase client did not load. Check your internet connection.',true);return;}
+    supabaseConfig={...DEFAULT_SUPABASE};
     sb=window.supabase.createClient(supabaseConfig.url,supabaseConfig.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
     const {data:sessionData,error}=await sb.auth.getSession();if(error){setAuthMessage(error.message,true);setAuthScreen(true);return;}
     if(sessionData.session){sbUser=sessionData.session.user;await afterSignIn();}else setAuthScreen(true);
   }
   async function signIn(){
-    const url=$('authSupabaseUrl').value.trim()||supabaseConfig.url,key=$('authSupabaseKey').value.trim()||supabaseConfig.key,email=$('authEmail').value.trim(),password=$('authPassword').value;
-    if(!url||!key||!email||!password){setAuthMessage('Enter the project URL, public key, email and password.',true);return;}
-    if(!/^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(url)){setAuthMessage('Please enter a valid Supabase project URL.',true);return;}
-    supabaseConfig={url,key};try{localStorage.setItem(KEY+'_supabase',JSON.stringify(supabaseConfig));}catch(e){}
+    const email=$('authEmail').value.trim(),password=$('authPassword').value;
+    if(!email||!password){setAuthMessage('Enter your email and password.',true);return;}
     if(!window.supabase){setAuthMessage('Supabase client did not load. Check your internet connection.',true);return;}
-    sb=window.supabase.createClient(url,key,{auth:{persistSession:true,autoRefreshToken:true}});$('signInBtn').disabled=true;$('signInBtn').textContent='Signing in…';
+    supabaseConfig={...DEFAULT_SUPABASE};
+    sb=window.supabase.createClient(supabaseConfig.url,supabaseConfig.key,{auth:{persistSession:true,autoRefreshToken:true}});$('signInBtn').disabled=true;$('signInBtn').textContent='Signing in…';
     const {data:res,error}=await sb.auth.signInWithPassword({email,password});$('signInBtn').disabled=false;$('signInBtn').textContent='Sign in securely';
     if(error){setAuthMessage(error.message,true);return;}sbUser=res.user;await afterSignIn();
   }
@@ -369,7 +368,7 @@ Selected room(s) overlap with ${collision.guestName} (Room ${roomsOf(collision).
   $('prevMonth').onclick=()=>{currentMonth--;if(currentMonth<0){currentMonth=11;currentYear--;}ensureYear(currentYear);selectedDate=`${currentYear}-${String(currentMonth+1).padStart(2,'0')}-01`;render();};
   $('nextMonth').onclick=()=>{currentMonth++;if(currentMonth>11){currentMonth=0;currentYear++;}ensureYear(currentYear);selectedDate=`${currentYear}-${String(currentMonth+1).padStart(2,'0')}-01`;render();};
   $('yearSelect').onchange=()=>{currentYear=+$('yearSelect').value;selectedDate=`${currentYear}-${String(currentMonth+1).padStart(2,'0')}-01`;render();};
-  $('settingsBtn').onclick=()=>{$('settingsSupabaseUrl').value=supabaseConfig.url;$('settingsSupabaseKey').value=supabaseConfig.key;$('resortNameInput').value=data.resortName;$('sheetsWebAppUrl').value=sheetsConfig.url;$('sheetsSecret').value=sheetsConfig.secret;updateSheetsHelp();$('settingsModal').classList.add('show');};
+  $('settingsBtn').onclick=()=>{$('resortNameInput').value=data.resortName;$('sheetsWebAppUrl').value=sheetsConfig.url;$('sheetsSecret').value=sheetsConfig.secret;updateSheetsHelp();$('settingsModal').classList.add('show');};
   $('cancelSettings').onclick=()=>$('settingsModal').classList.remove('show');
   function updateSheetsHelp(){
     let last=null;try{last=JSON.parse(localStorage.getItem(KEY+'_sheets_last')||'null')}catch(e){}
@@ -377,7 +376,7 @@ Selected room(s) overlap with ${collision.guestName} (Room ${roomsOf(collision).
   }
   $('saveSettings').onclick=()=>{
     data.resortName=$('resortNameInput').value.trim()||'Resort Booking Manager';
-    supabaseConfig.url=$('settingsSupabaseUrl').value.trim();supabaseConfig.key=$('settingsSupabaseKey').value.trim();try{localStorage.setItem(KEY+'_supabase',JSON.stringify(supabaseConfig));}catch(e){}
+    supabaseConfig={...DEFAULT_SUPABASE};
     sheetsConfig.url=$('sheetsWebAppUrl').value.trim();sheetsConfig.secret=$('sheetsSecret').value.trim();
     if(sheetsConfig.url && !/^https:\/\/script\.google\.com\/macros\/s\/.+\/exec(?:\?.*)?$/.test(sheetsConfig.url)){alert('Please paste the deployed Google Apps Script Web App URL ending in /exec.');return;}
     try{localStorage.setItem(KEY+'_sheets',JSON.stringify(sheetsConfig));}catch(e){alert('Could not save sync settings in this browser.');return;}
@@ -414,7 +413,7 @@ Selected room(s) overlap with ${collision.guestName} (Room ${roomsOf(collision).
     }catch(e){alert('Could not read this backup file. Please select a valid JSON backup.');}
   };
   $('signInBtn').onclick=signIn;$('authPassword').addEventListener('keydown',e=>{if(e.key==='Enter')signIn();});$('signOutBtn').onclick=signOut;
-  load();$('authSupabaseUrl').value=supabaseConfig.url;$('authSupabaseKey').value=supabaseConfig.key;setAuthScreen(true);initializeSupabase().catch(e=>{setAuthScreen(true);setAuthMessage(e.message||'Could not initialize Supabase.',true);});
+  load();setAuthScreen(true);initializeSupabase().catch(e=>{setAuthScreen(true);setAuthMessage(e.message||'Could not initialize Supabase.',true);});
 })();
 </script>
 </body>

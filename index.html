@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title> Booking Manager</title>
+<title>Resort Booking Manager</title>
 <style>
 :root{--bg:#f4f7fb;--card:#fff;--text:#172033;--muted:#687386;--line:#e4e9f1;--primary:#176b5b;--primary2:#e2f4ee;--red:#b42318;--redbg:#fff0ee;--amber:#9a6700;--amberbg:#fff6dc;--blue:#2459a9;--bluebg:#eaf2ff}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:var(--text)}button,input,select,textarea{font:inherit}button{cursor:pointer;border:0;border-radius:10px;padding:10px 14px;font-weight:650}.primary{background:var(--primary);color:#fff}.secondary{background:#edf1f6;color:#243047}.danger{background:var(--redbg);color:var(--red)}.app{max-width:1500px;margin:auto;padding:22px}.top{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px}.brand h1{font-size:clamp(22px,3vw,30px);margin:0}.brand p{margin:5px 0 0;color:var(--muted)}.top-actions{display:flex;gap:8px;flex-wrap:wrap}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px}.stat,.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 3px 14px #17203308}.stat{padding:16px}.stat .label{font-size:13px;color:var(--muted)}.stat .value{font-size:clamp(20px,2.5vw,28px);font-weight:800;margin-top:7px;overflow-wrap:anywhere}.stat small{display:block;color:var(--muted);margin-top:5px}.layout{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(300px,1fr);gap:16px;align-items:start}.panel{padding:16px;min-width:0}.panel-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}.panel h2{font-size:18px;margin:0}.month-controls{display:flex;align-items:center;gap:7px}.month-controls strong{min-width:145px;text-align:center}.month-controls button{padding:8px 11px}.calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}.dow{text-align:center;font-size:12px;font-weight:750;color:var(--muted);padding:7px 0}.day{border:1px solid var(--line);background:#fff;border-radius:10px;min-height:94px;padding:7px 6px;text-align:left;min-width:0;color:var(--text);display:flex;flex-direction:column;gap:4px}.day:hover{border-color:#8aa99f}.day.blank{background:transparent;border-color:transparent;pointer-events:none}.day.today{outline:2px solid #78b6a4}.day.selected{border:2px solid var(--primary);padding:6px 5px}.day-num{font-size:13px;font-weight:800}.day-total{font-size:10px;color:var(--primary);font-weight:800;overflow-wrap:anywhere}.dots{display:flex;gap:3px;flex-wrap:wrap}.calendar-bars{display:grid;gap:2px;width:100%;min-width:0}.calendar-bar{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:9px;line-height:1.35;padding:2px 3px;border-radius:4px;background:#e2f4ee;color:#176b5b;font-weight:700}.calendar-bar.tentative{background:#fff6dc;color:#9a6700}.calendar-bar.checked-in{background:#eaf2ff;color:#2459a9}.calendar-bar.checked-out{background:#edf1f6;color:#596579}.calendar-bar.cancelled{background:#fff0ee;color:#b42318}.dot{width:7px;height:7px;border-radius:50%;background:#1e8a70}.dot.due{background:#e39a19}.dot.full{background:#d34b43}.legend{display:flex;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin-top:12px}.legend span{display:flex;align-items:center;gap:5px}.legend i{display:inline-block;width:8px;height:8px;border-radius:50%}.selected-date{font-size:13px;color:var(--muted);margin:0 0 12px}.day-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-bottom:14px}.mini{background:#f6f8fb;border-radius:10px;padding:10px}.mini small{display:block;color:var(--muted);font-size:11px}.mini strong{display:block;font-size:14px;margin-top:4px;overflow-wrap:anywhere}.room-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.room{border:1px solid var(--line);border-radius:11px;padding:10px;min-width:0}.room.booked{background:#f0faf6;border-color:#b9e1d2}.room .room-title{font-weight:800;display:flex;justify-content:space-between;gap:5px}.pill{font-size:10px;border-radius:999px;padding:3px 6px;background:#edf1f6;color:#586275;white-space:nowrap}.pill.booked{background:var(--primary2);color:var(--primary)}.room .guest{font-size:12px;color:var(--muted);margin-top:6px;overflow-wrap:anywhere}.room .due{font-size:12px;margin-top:6px;font-weight:750}.room-actions{display:flex;gap:5px;margin-top:8px}.room-actions button{font-size:11px;padding:6px 8px}.table-wrap{overflow:auto}table{border-collapse:collapse;width:100%;font-size:13px}th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);white-space:nowrap}th{color:var(--muted);font-weight:700;background:#fafbfd}.table-empty{text-align:center;color:var(--muted);padding:22px}.side-stack{display:grid;gap:16px}.year-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.month-chip{border:1px solid var(--line);background:#fff;padding:9px 4px;border-radius:9px;text-align:center;font-size:12px}.month-chip.active{background:var(--primary2);border-color:#a5d6c5;color:var(--primary)}.month-chip small{display:block;margin-top:4px;color:var(--muted);font-size:10px}.notice{font-size:12px;color:var(--muted);line-height:1.5;margin-top:12px}.modal-backdrop{position:fixed;inset:0;background:#10182899;display:none;align-items:center;justify-content:center;padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));z-index:10;overscroll-behavior:contain}.modal-backdrop.show{display:flex}.modal{background:#fff;border-radius:18px;padding:20px;width:min(650px,100%);max-height:min(92vh,920px);overflow:auto;-webkit-overflow-scrolling:touch;box-shadow:0 20px 60px #0003;min-width:0}.modal h2{margin:0 0 16px;font-size:clamp(18px,4vw,22px)}.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field{display:flex;flex-direction:column;gap:6px;min-width:0}.field.full{grid-column:1/-1}.field label{font-size:12px;font-weight:750;color:#4b5668}.field input,.field select,.field textarea{width:100%;max-width:100%;border:1px solid #d6deea;border-radius:9px;padding:10px 12px;background:white;color:var(--text);min-height:44px;font-size:16px}.field textarea{resize:vertical;min-height:72px;line-height:1.4}.modal-actions{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:18px}.modal-actions div{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}.modal-actions button{min-height:44px}.help{font-size:12px;color:var(--muted);overflow-wrap:anywhere}.toast{position:fixed;bottom:max(20px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:#172033;color:white;padding:12px 18px;border-radius:12px;display:none;z-index:20;max-width:min(92vw,420px);text-align:center}.toast.show{display:block}
@@ -60,7 +60,7 @@
 <body>
 <div class="auth-screen" id="authScreen">
   <section class="auth-card">
-    <h1>Chutirnimontron Booking Manager</h1><p class="help">Secure team sign-in · Shared Supabase database</p>
+    <h1>Resort Booking Manager</h1><p class="help">Secure team sign-in · Shared Supabase database</p>
     <div class="field"><label for="authEmail">Work email</label><input id="authEmail" type="email" placeholder="staff@yourresort.com" autocomplete="username"></div>
     <div class="field"><label for="authPassword">Password</label><input id="authPassword" type="password" placeholder="Your account password" autocomplete="current-password"></div>
     <button class="primary" id="signInBtn">Sign in securely</button>
@@ -172,11 +172,18 @@
     <div class="field"><label for="resortNameInput">Resort name</label><input id="resortNameInput" placeholder="Your resort name"></div>
     <hr style="border:0;border-top:1px solid var(--line);margin:18px 0">
     <h3 style="margin:0 0 6px;font-size:16px">Google Sheets automation</h3>
-    <p class="help">Syncs booking creation, edits, reschedules, and cancellations to your existing spreadsheet. Paste the deployed Apps Script Web App URL and the same shared secret configured in Apps Script.</p>
+    <p class="help">Syncs create, edit, reschedule, cancel, and payment updates to Google Sheets. The Apps Script builds <strong>All Bookings</strong>, <strong>Daily Report</strong>, <strong>Monthly Report</strong>, and <strong>Dashboard</strong> tabs. Paste the Web App URL and the same shared secret from <code>Code.gs</code>. After deploying, run <code>installScheduledRefresh</code> once in Apps Script for a daily rebuild.</p>
     <div class="field"><label for="sheetsWebAppUrl">Apps Script Web App URL</label><input id="sheetsWebAppUrl" type="url" placeholder="https://script.google.com/macros/s/.../exec" autocomplete="url"></div>
     <div class="field" style="margin-top:10px"><label for="sheetsSecret">Shared secret</label><input id="sheetsSecret" type="password" placeholder="Use the same secret as in Apps Script" autocomplete="new-password"></div>
-    <p class="help" id="sheetsSyncHelp">Not configured. Booking data remains saved locally until a Web App URL is set.</p>
-    <div class="modal-actions"><button type="button" class="secondary" id="testSheetsBtn">Send test</button><div><button class="secondary" id="cancelSettings">Cancel</button><button class="primary" id="saveSettings">Save settings</button></div></div>
+    <p class="help" id="sheetsSyncHelp">Not configured. Enter the Web App URL and secret, then Save settings.</p>
+    <div class="modal-actions" style="flex-wrap:wrap">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button type="button" class="secondary" id="testSheetsBtn">Send test</button>
+        <button type="button" class="secondary" id="syncAllSheetsBtn">Sync all bookings</button>
+        <button type="button" class="secondary" id="refreshReportsBtn">Rebuild reports</button>
+      </div>
+      <div><button class="secondary" id="cancelSettings">Cancel</button><button class="primary" id="saveSettings">Save settings</button></div>
+    </div>
   </div>
 </div>
 <div class="modal-backdrop" id="importModal">
@@ -259,24 +266,44 @@
     $('yearSelect').innerHTML=[...years].sort((a,b)=>a-b).map(y=>`<option value="${y}">${y}</option>`).join('');
     $('yearSelect').value=String(currentYear);
   }
-  function syncBookingToSheets(booking, action){
-    if(!sheetsConfig.url || !sheetsConfig.secret) return;
-    const payload={secret:sheetsConfig.secret,action,booking:{
+  function sheetsBookingPayload(booking){
+    return {
       id:booking.id,room:booking.room,rooms:roomsOf(booking),guestName:booking.guestName,phone:booking.phone||'',guestType:booking.guestType||'',
       checkIn:booking.checkIn,checkOut:booking.checkOut,nightlyRate:booking.nightlyRate??'',discountAmount:booking.discountAmount||0,
       totalAmount:booking.totalAmount||0,paidAmount:booking.paidAmount||0,dueAmount:due(booking),status:booking.status||'Booked',
       paymentNote:booking.paymentNote||'',notes:booking.notes||'',resortName:data.resortName||'Resort Booking Manager'
-    }};
+    };
+  }
+  function postToSheets(payload, meta){
+    if(!sheetsConfig.url || !sheetsConfig.secret) return Promise.resolve(false);
+    const body=Object.assign({secret:sheetsConfig.secret},payload);
     try{
-      fetch(sheetsConfig.url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload),keepalive:true})
-        .then(()=>{localStorage.setItem(KEY+'_sheets_last',JSON.stringify({time:new Date().toISOString(),action,id:booking.id,result:'sent'}));})
-        .catch(()=>{localStorage.setItem(KEY+'_sheets_last',JSON.stringify({time:new Date().toISOString(),action,id:booking.id,result:'failed'}));});
-    }catch(e){try{localStorage.setItem(KEY+'_sheets_last',JSON.stringify({time:new Date().toISOString(),action,id:booking.id,result:'failed'}));}catch(_){} }
+      return fetch(sheetsConfig.url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body),keepalive:true})
+        .then(()=>{try{localStorage.setItem(KEY+'_sheets_last',JSON.stringify({time:new Date().toISOString(),action:meta.action||payload.action,id:meta.id||'',result:'sent'}));}catch(_){} updateSheetsHelp();return true;})
+        .catch(()=>{try{localStorage.setItem(KEY+'_sheets_last',JSON.stringify({time:new Date().toISOString(),action:meta.action||payload.action,id:meta.id||'',result:'failed'}));}catch(_){} updateSheetsHelp();return false;});
+    }catch(e){
+      try{localStorage.setItem(KEY+'_sheets_last',JSON.stringify({time:new Date().toISOString(),action:meta.action||payload.action,id:meta.id||'',result:'failed'}));}catch(_){}
+      updateSheetsHelp();
+      return Promise.resolve(false);
+    }
+  }
+  function syncBookingToSheets(booking, action){
+    if(!sheetsConfig.url || !sheetsConfig.secret) return;
+    postToSheets({action,booking:sheetsBookingPayload(booking)},{action,id:booking.id});
+  }
+  function syncAllBookingsToSheets(){
+    if(!sheetsConfig.url || !sheetsConfig.secret){alert('Configure the Apps Script Web App URL and shared secret first.');return Promise.resolve(false);}
+    return postToSheets({action:'sync_all',bookings:data.bookings.map(sheetsBookingPayload),resortName:data.resortName},{action:'sync_all',id:String(data.bookings.length)});
+  }
+  function refreshSheetsReports(){
+    if(!sheetsConfig.url || !sheetsConfig.secret){alert('Configure the Apps Script Web App URL and shared secret first.');return Promise.resolve(false);}
+    return postToSheets({action:'refresh_reports'},{action:'refresh_reports',id:''});
   }
   function bookingAction(oldBooking,newBooking){
     if(!oldBooking)return 'create';
     if(newBooking.status==='Cancelled' && oldBooking.status!=='Cancelled')return 'cancel';
     if(oldBooking.checkIn!==newBooking.checkIn||oldBooking.checkOut!==newBooking.checkOut||JSON.stringify(roomsOf(oldBooking))!==JSON.stringify(roomsOf(newBooking)))return 'reschedule';
+    if(Number(oldBooking.paidAmount||0)!==Number(newBooking.paidAmount||0) || String(oldBooking.paymentNote||'')!==String(newBooking.paymentNote||''))return 'payment';
     return 'edit';
   }
   function render(){
@@ -415,7 +442,9 @@ Selected room(s) overlap with ${collision.guestName} (Room ${roomsOf(collision).
   $('cancelSettings').onclick=()=>$('settingsModal').classList.remove('show');
   function updateSheetsHelp(){
     let last=null;try{last=JSON.parse(localStorage.getItem(KEY+'_sheets_last')||'null')}catch(e){}
-    $('sheetsSyncHelp').textContent=!sheetsConfig.url?'Not configured. Booking data remains saved locally until a Web App URL is set.':(last?`Configured · last request: ${last.action} · ${new Date(last.time).toLocaleString()} · ${last.result==='failed'?'browser request failed':'request sent (Google response cannot be verified in this browser)'}`:'Configured. No sync request has been sent yet.');
+    if(!sheetsConfig.url){$('sheetsSyncHelp').textContent='Not configured. Enter the Web App URL and secret, then Save settings.';return;}
+    const base='Configured · sheets: All Bookings, Daily Report, Monthly Report, Dashboard.';
+    $('sheetsSyncHelp').textContent=last?`${base} Last request: ${last.action}${last.id?' · '+last.id:''} · ${new Date(last.time).toLocaleString()} · ${last.result==='failed'?'browser request failed — check URL/internet':'request sent (verify Sync Log in Google Sheets; browser cannot read the response)'}`:base+' No sync request has been sent yet.';
   }
   $('saveSettings').onclick=()=>{
     data.resortName=$('resortNameInput').value.trim()||'Resort Booking Manager';
@@ -429,7 +458,31 @@ Selected room(s) overlap with ${collision.guestName} (Room ${roomsOf(collision).
     const url=$('sheetsWebAppUrl').value.trim(),secret=$('sheetsSecret').value.trim();
     if(!url||!secret){alert('Enter the Web App URL and shared secret first.');return;}
     if(!/^https:\/\/script\.google\.com\/macros\/s\/.+\/exec(?:\?.*)?$/.test(url)){alert('Please paste the deployed Google Apps Script Web App URL ending in /exec.');return;}
-    try{fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({secret,action:'test',booking:{resortName:data.resortName}})}).then(()=>toast('Test request sent. Check the Apps Script Executions page to confirm it ran.')).catch(()=>alert('Browser could not send the test request. Check the URL and internet connection.'));}catch(e){alert('Could not send the test request.');}
+    sheetsConfig={url,secret};
+    postToSheets({action:'test',booking:{resortName:data.resortName}},{action:'test',id:''})
+      .then(ok=>ok?toast('Test request sent. Check Sync Log and that All Bookings / Daily / Monthly / Dashboard tabs exist.'):alert('Browser could not send the test request. Check the URL and internet connection.'));
+  };
+  $('syncAllSheetsBtn').onclick=()=>{
+    const url=$('sheetsWebAppUrl').value.trim(),secret=$('sheetsSecret').value.trim();
+    if(url&&secret){sheetsConfig={url,secret};try{localStorage.setItem(KEY+'_sheets',JSON.stringify(sheetsConfig));}catch(e){}}
+    if(!data.bookings.length){alert('There are no bookings loaded to sync yet. Sign in and load data first.');return;}
+    if(!confirm(`Send all ${data.bookings.length} booking(s) to Google Sheets and rebuild Daily / Monthly / Dashboard reports?`))return;
+    $('syncAllSheetsBtn').disabled=true;
+    syncAllBookingsToSheets().then(ok=>{
+      $('syncAllSheetsBtn').disabled=false;
+      if(ok)toast('Full sync request sent. Verify rows in All Bookings and Sync Log.');
+      else alert('Could not send the sync request. Check the Web App URL and internet connection.');
+    });
+  };
+  $('refreshReportsBtn').onclick=()=>{
+    const url=$('sheetsWebAppUrl').value.trim(),secret=$('sheetsSecret').value.trim();
+    if(url&&secret){sheetsConfig={url,secret};try{localStorage.setItem(KEY+'_sheets',JSON.stringify(sheetsConfig));}catch(e){}}
+    $('refreshReportsBtn').disabled=true;
+    refreshSheetsReports().then(ok=>{
+      $('refreshReportsBtn').disabled=false;
+      if(ok)toast('Rebuild reports request sent. Open Daily Report / Monthly Report / Dashboard in Sheets.');
+      else alert('Could not send the rebuild request. Check the Web App URL and internet connection.');
+    });
   };
   $('exportBtn').onclick=()=>{
     const rows=[['Booking ID','Room(s)','Guest','Phone','Type','Check-in','Check-out','Rate/night','Discount','Total amount','Received','Due','Status','Payment note','Notes'],...data.bookings.map(b=>[b.id,roomsOf(b).join('|'),b.guestName,b.phone||'',b.guestType||'',b.checkIn,b.checkOut,b.nightlyRate??'',b.discountAmount||0,b.totalAmount,b.paidAmount,due(b),b.status,b.paymentNote||'',b.notes||''])];

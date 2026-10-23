@@ -1,4 +1,5 @@
 # Changes in the Supabase build
+- Expanded Google Sheets sync: All Bookings upserts, Daily Report, Monthly Report, Dashboard, Sync Log, payment actions, sync-all / rebuild-reports, and optional daily Apps Script trigger.
 - Added responsive sign-in screen and saved project URL/public client key settings.
 - Added authenticated admin/staff role awareness; admin-only settings and backup/restore controls.
 - Replaced booking creation/edit/cancel writes with a shared Supabase RPC call; errors prevent local-only saves.

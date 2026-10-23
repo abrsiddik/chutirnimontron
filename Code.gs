@@ -23,7 +23,7 @@ const BOOKING_HEADERS = [
   'Booking ID', 'Resort', 'Room(s)', 'Guest Name', 'Phone', 'Booking Type',
   'Check-in', 'Check-out', 'Nights', 'Rate / Room / Night', 'Discount',
   'Total Amount', 'Received', 'Due', 'Status', 'Payment Note', 'Notes',
-  'Last Action', 'Last Updated'
+  'NID(s)', 'Last Action', 'Last Updated'
 ];
 
 const DAILY_HEADERS = [
@@ -203,7 +203,7 @@ function upsertBookingRow_(sheet, b, action) {
     }
   }
   sheet.getRange(row, 1, 1, BOOKING_HEADERS.length).setValues([record]);
-  sheet.getRange(row, 19).setNumberFormat('yyyy-mm-dd hh:mm:ss');
+  sheet.getRange(row, BOOKING_HEADERS.length).setNumberFormat('yyyy-mm-dd hh:mm:ss');
   return row;
 }
 
@@ -220,6 +220,7 @@ function upsertManyBookings_(sheet, list, action) {
 function bookingRecord_(b, action) {
   const nights = dateDiff_(b.checkIn, b.checkOut);
   const rooms = Array.isArray(b.rooms) && b.rooms.length ? b.rooms : [b.room || ''];
+  const nids = Array.isArray(b.nids) ? b.nids.filter(Boolean) : (b.nid ? [b.nid] : []);
   return [
     String(b.id),
     safeCell_(b.resortName),
@@ -238,6 +239,7 @@ function bookingRecord_(b, action) {
     safeCell_(b.status || 'Booked'),
     safeCell_(b.paymentNote),
     safeCell_(b.notes),
+    safeCell_(nids.join(', ')),
     action || 'edit',
     new Date()
   ];

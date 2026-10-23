@@ -48,6 +48,7 @@
 }
 .status-booked{color:#176b5b;background:#e2f4ee}.status-tentative{color:#9a6700;background:#fff6dc}.status-checked-in{color:#2459a9;background:#eaf2ff}.status-checked-out{color:#596579;background:#edf1f6}.status-cancelled{color:#b42318;background:#fff0ee}
 .room .room-meta{font-size:11px;color:var(--muted);margin-top:4px}.top-actions button{min-height:42px}.day:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #8bbeb0;outline-offset:2px}
+.nid-list{display:grid;gap:8px}.nid-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center}.nid-row input{width:100%;border:1px solid #d6deea;border-radius:9px;padding:10px 12px;background:#fff;color:var(--text);min-height:44px;font-size:16px}.nid-row .nid-remove{min-height:44px;padding:8px 12px;font-size:12px}
 .auth-screen{position:fixed;inset:0;z-index:100;background:linear-gradient(135deg,#eaf5f1,#f4f7fb 55%,#e8eef8);display:flex;align-items:center;justify-content:center;padding:18px}.auth-card{width:min(440px,100%);background:white;border:1px solid var(--line);border-radius:22px;padding:26px;box-shadow:0 22px 70px #142d2b1a}.auth-card h1{margin:0 0 6px;font-size:25px}.auth-card .field{margin-top:12px}.auth-card .primary{width:100%;margin-top:14px;min-height:44px}.auth-message{font-size:12px;color:var(--muted);line-height:1.5;margin-top:12px}.connection-pill{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;background:#e2f4ee;color:#176b5b;font-size:12px;font-weight:750}.hidden{display:none!important}
 @media(max-width:760px){.layout{grid-template-columns:1fr}.top{align-items:flex-start}.top-actions{width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.top-actions button{width:100%;padding:10px 8px;font-size:12px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.calendar{gap:3px}.day{min-height:75px}.panel{border-radius:13px}.auth-card{padding:20px}}
 @media(min-width:761px) and (max-width:1024px){
@@ -133,7 +134,7 @@
   <section class="panel" id="bookingTablePanel" style="margin-top:16px;display:none">
     <div class="panel-head"><h2>Booking records</h2><button class="secondary" id="hideListBtn">Hide list</button></div>
     <div class="filters"><input id="searchBookings" placeholder="Search guest, phone, or booking ID"><select id="filterRoom"><option value="">All rooms</option></select><input id="filterDate" type="date" title="Bookings active on this date"><select id="filterStatus"><option value="">All statuses</option><option>Booked</option><option>Tentative</option><option>Checked-in</option><option>Checked-out</option><option>Cancelled</option></select><button class="secondary" id="clearFilters">Clear filters</button></div>
-    <div class="table-wrap"><table><thead><tr><th>Booking ID</th><th>Check-in</th><th>Check-out</th><th>Room(s)</th><th>Guest</th><th>Phone</th><th>Total</th><th>Paid</th><th>Due</th><th>Status</th><th>Actions</th></tr></thead><tbody id="bookingBody"></tbody></table></div>
+    <div class="table-wrap"><table><thead><tr><th>Booking ID</th><th>Check-in</th><th>Check-out</th><th>Room(s)</th><th>Guest</th><th>Phone</th><th>NID(s)</th><th>Total</th><th>Paid</th><th>Due</th><th>Status</th><th>Actions</th></tr></thead><tbody id="bookingBody"></tbody></table></div>
   </section>
 </div>
 
@@ -147,6 +148,12 @@
         <div class="field"><label for="guestName">Guest name *</label><input id="guestName" required placeholder="Guest full name"></div>
         <div class="field"><label for="phone">Phone number</label><input id="phone" type="tel" placeholder="01XXXXXXXXX"></div>
         <div class="field"><label for="guestType">Booking type</label><select id="guestType"><option>Couple</option><option>Family</option><option>Friends</option><option>Other</option></select></div>
+        <div class="field full">
+          <label>Guest NID / ID numbers <span style="font-weight:600;color:var(--muted)">(optional)</span></label>
+          <div class="nid-list" id="nidList"></div>
+          <button type="button" class="secondary" id="addNidBtn" style="margin-top:8px;align-self:flex-start;min-height:40px;padding:8px 12px;font-size:13px">＋ Add another NID</button>
+          <p class="help" style="margin:6px 0 0">Add one or more NID / passport / ID numbers for guests on this booking. Leave blank if not needed.</p>
+        </div>
         <div class="field"><label for="checkIn">Check-in *</label><input id="checkIn" type="date" required></div>
         <div class="field"><label for="checkOut">Check-out *</label><input id="checkOut" type="date" required></div>
         <div class="field"><label for="nightlyRate">Rate per room / night (৳) *</label><input id="nightlyRate" type="number" min="0" step="any" required placeholder="3000"></div>
@@ -210,8 +217,9 @@
   let currentYear=new Date().getFullYear(), currentMonth=new Date().getMonth(), selectedDate=dateToday;
   function load(){try{const x=JSON.parse(localStorage.getItem(KEY)||'null');if(x&&Array.isArray(x.bookings)){data={resortName:x.resortName||'Resort Booking Manager',bookings:x.bookings};}}catch(e){} try{const c=JSON.parse(localStorage.getItem(KEY+'_sheets')||'null');if(c)sheetsConfig={url:c.url||'',secret:c.secret||''};}catch(e){} supabaseConfig={...DEFAULT_SUPABASE};}
   function save(){if(remoteReady)return true;try{localStorage.setItem(KEY,JSON.stringify(data));return true;}catch(e){alert('Browser storage is unavailable or full. Please use Backup data to save a copy, and try opening this file in Safari or Chrome.');return false;}}
-  const dbBooking=b=>({id:b.id,room:Number(b.room)||roomsOf(b)[0]||1,rooms:roomsOf(b),guest_name:b.guestName,phone:b.phone||'',guest_type:b.guestType||'Family',check_in:b.checkIn,check_out:b.checkOut,nightly_rate:Number(b.nightlyRate)||0,discount_amount:Number(b.discountAmount)||0,total_amount:Number(b.totalAmount)||0,paid_amount:Number(b.paidAmount)||0,status:b.status||'Booked',payment_note:b.paymentNote||'',notes:b.notes||'',resort_name:data.resortName||'Resort Booking Manager'});
-  const fromDbBooking=b=>({id:b.id,room:b.room,rooms:b.rooms||[b.room],guestName:b.guest_name,phone:b.phone||'',guestType:b.guest_type||'Family',checkIn:b.check_in,checkOut:b.check_out,nightlyRate:Number(b.nightly_rate)||0,discountAmount:Number(b.discount_amount)||0,totalAmount:Number(b.total_amount)||0,paidAmount:Number(b.paid_amount)||0,status:b.status||'Booked',paymentNote:b.payment_note||'',notes:b.notes||''});
+  const nidsOf=b=>Array.isArray(b?.nids)?b.nids.map(x=>String(x||'').trim()).filter(Boolean):(b?.nid?[String(b.nid).trim()].filter(Boolean):[]);
+  const dbBooking=b=>({id:b.id,room:Number(b.room)||roomsOf(b)[0]||1,rooms:roomsOf(b),guest_name:b.guestName,phone:b.phone||'',guest_type:b.guestType||'Family',nids:nidsOf(b),check_in:b.checkIn,check_out:b.checkOut,nightly_rate:Number(b.nightlyRate)||0,discount_amount:Number(b.discountAmount)||0,total_amount:Number(b.totalAmount)||0,paid_amount:Number(b.paidAmount)||0,status:b.status||'Booked',payment_note:b.paymentNote||'',notes:b.notes||'',resort_name:data.resortName||'Resort Booking Manager'});
+  const fromDbBooking=b=>({id:b.id,room:b.room,rooms:b.rooms||[b.room],guestName:b.guest_name,phone:b.phone||'',guestType:b.guest_type||'Family',nids:Array.isArray(b.nids)?b.nids:[],checkIn:b.check_in,checkOut:b.check_out,nightlyRate:Number(b.nightly_rate)||0,discountAmount:Number(b.discount_amount)||0,totalAmount:Number(b.total_amount)||0,paidAmount:Number(b.paid_amount)||0,status:b.status||'Booked',paymentNote:b.payment_note||'',notes:b.notes||''});
   function setAuthMessage(msg,error=false){$('authMessage').textContent=msg;$('authMessage').style.color=error?'#b42318':'#687386';}
   function setAuthScreen(show){$('authScreen').classList.toggle('hidden',!show);$('mainApp').classList.toggle('hidden',show);}
   function setRoleUI(){ $('connectionPill').textContent=sbUser?`${sbUser.email} · ${sbRole||'staff'}`:'Not connected'; $('currentRoleLabel').textContent=sbRole||'Not signed in'; const admin=sbRole==='admin'; ['settingsBtn','backupBtn','restoreOpenBtn'].forEach(id=>$(id).classList.toggle('hidden',!admin)); }
@@ -266,10 +274,23 @@
     $('yearSelect').innerHTML=[...years].sort((a,b)=>a-b).map(y=>`<option value="${y}">${y}</option>`).join('');
     $('yearSelect').value=String(currentYear);
   }
+  function collectedNids(){
+    return [...document.querySelectorAll('#nidList .nid-input')].map(el=>el.value.trim()).filter(Boolean);
+  }
+  function renderNidFields(values){
+    const list=Array.isArray(values)&&values.length?values.map(String):[''];
+    $('nidList').innerHTML=list.map((v,i)=>`<div class="nid-row"><input class="nid-input" type="text" inputmode="numeric" autocomplete="off" placeholder="NID / passport / ID number" value="${esc(v)}" aria-label="NID ${i+1}"><button type="button" class="secondary nid-remove" data-nid-remove="${i}" ${list.length<=1?'disabled':''} aria-label="Remove NID">Remove</button></div>`).join('');
+    $('nidList').querySelectorAll('[data-nid-remove]').forEach(btn=>btn.onclick=()=>{
+      const cur=[...document.querySelectorAll('#nidList .nid-input')].map(el=>el.value);
+      const idx=+btn.dataset.nidRemove;
+      const next=cur.filter((_,i)=>i!==idx);
+      renderNidFields(next.length?next:['']);
+    });
+  }
   function sheetsBookingPayload(booking){
     return {
       id:booking.id,room:booking.room,rooms:roomsOf(booking),guestName:booking.guestName,phone:booking.phone||'',guestType:booking.guestType||'',
-      checkIn:booking.checkIn,checkOut:booking.checkOut,nightlyRate:booking.nightlyRate??'',discountAmount:booking.discountAmount||0,
+      nids:nidsOf(booking),checkIn:booking.checkIn,checkOut:booking.checkOut,nightlyRate:booking.nightlyRate??'',discountAmount:booking.discountAmount||0,
       totalAmount:booking.totalAmount||0,paidAmount:booking.paidAmount||0,dueAmount:due(booking),status:booking.status||'Booked',
       paymentNote:booking.paymentNote||'',notes:booking.notes||'',resortName:data.resortName||'Resort Booking Manager'
     };
@@ -346,7 +367,7 @@
     for(let room=1;room<=ROOM_COUNT;room++){
       const b=list.find(x=>roomsOf(x).includes(room));
       if(b){
-        html+=`<div class="room booked"><div class="room-title">Room ${String(room).padStart(2,'0')} <span class="pill status-${String(b.status||'Booked').toLowerCase().replace(/[^a-z]+/g,'-')}">${esc(b.status||'Booked')}</span></div><div class="room-meta">${esc((roomCatalog.find(r=>+r.room_number===room)||{}).category||'Standard')} · Booking rate: ${money(b.nightlyRate||0)} / night</div><div class="guest">${esc(b.guestName)} · out ${fmtDate(b.checkOut)}${roomsOf(b).length>1?' · '+roomsOf(b).length+' rooms':''}</div><div class="due" style="color:${due(b)>0?'#9a6700':'#176b5b'}">${due(b)>0?money(due(b))+' due':'Fully paid'}</div><div class="room-actions"><button class="secondary" data-edit="${b.id}">Edit</button></div></div>`;
+        html+=`<div class="room booked"><div class="room-title">Room ${String(room).padStart(2,'0')} <span class="pill status-${String(b.status||'Booked').toLowerCase().replace(/[^a-z]+/g,'-')}">${esc(b.status||'Booked')}</span></div><div class="room-meta">${esc((roomCatalog.find(r=>+r.room_number===room)||{}).category||'Standard')} · Booking rate: ${money(b.nightlyRate||0)} / night</div><div class="guest">${esc(b.guestName)} · out ${fmtDate(b.checkOut)}${roomsOf(b).length>1?' · '+roomsOf(b).length+' rooms':''}${nidsOf(b).length?` · NID: ${esc(nidsOf(b).join(', '))}`:''}</div><div class="due" style="color:${due(b)>0?'#9a6700':'#176b5b'}">${due(b)>0?money(due(b))+' due':'Fully paid'}</div><div class="room-actions"><button class="secondary" data-edit="${b.id}">Edit</button></div></div>`;
       }else{
         html+=`<div class="room"><div class="room-title">Room ${String(room).padStart(2,'0')} <span class="pill status-checked-out">Available</span></div><div class="room-meta">${esc((roomCatalog.find(r=>+r.room_number===room)||{}).category||'Standard')} · ${money((roomCatalog.find(r=>+r.room_number===room)||{}).nightly_rate||0)} / night</div><div class="guest">No booking on this date</div><div class="room-actions"><button class="primary" data-bookroom="${room}">＋ Book</button></div></div>`;
       }
@@ -377,10 +398,10 @@
   function renderBookingsTable(){
     const q=$('searchBookings').value.trim().toLowerCase(), roomFilter=$('filterRoom').value, dateFilter=$('filterDate').value, statusFilter=$('filterStatus').value;
     const list=data.bookings.filter(b=>{
-      const searchable=[b.id,b.guestName,b.phone].join(' ').toLowerCase();
+      const searchable=[b.id,b.guestName,b.phone,nidsOf(b).join(' ')].join(' ').toLowerCase();
       return (!q||searchable.includes(q))&&(!roomFilter||roomsOf(b).includes(+roomFilter))&&(!dateFilter||(b.checkIn<=dateFilter&&dateFilter<b.checkOut))&&(!statusFilter||b.status===statusFilter);
     }).sort((a,b)=>a.checkIn.localeCompare(b.checkIn));
-    $('bookingBody').innerHTML=list.length?list.map(b=>`<tr><td>${esc(b.id)}</td><td>${fmtDate(b.checkIn)}</td><td>${fmtDate(b.checkOut)}</td><td>${roomsOf(b).map(r=>'R'+r).join(', ')}</td><td>${esc(b.guestName)}</td><td>${esc(b.phone||'—')}</td><td>${money(b.totalAmount)}</td><td>${money(b.paidAmount)}</td><td style="color:${due(b)>0?'#9a6700':'#176b5b'}">${money(due(b))}</td><td class="${b.status==='Cancelled'?'status-cancelled':''}">${esc(b.status)}</td><td><div class="row-actions"><button class="secondary" data-edit="${b.id}">Edit</button>${b.status!=='Cancelled'?`<button class="danger" data-cancel="${b.id}">Cancel</button>`:''}</div></td></tr>`).join(''):'<tr><td colspan="11" class="table-empty">No bookings match these filters.</td></tr>';
+    $('bookingBody').innerHTML=list.length?list.map(b=>`<tr><td>${esc(b.id)}</td><td>${fmtDate(b.checkIn)}</td><td>${fmtDate(b.checkOut)}</td><td>${roomsOf(b).map(r=>'R'+r).join(', ')}</td><td>${esc(b.guestName)}</td><td>${esc(b.phone||'—')}</td><td>${esc(nidsOf(b).join(', ')||'—')}</td><td>${money(b.totalAmount)}</td><td>${money(b.paidAmount)}</td><td style="color:${due(b)>0?'#9a6700':'#176b5b'}">${money(due(b))}</td><td class="${b.status==='Cancelled'?'status-cancelled':''}">${esc(b.status)}</td><td><div class="row-actions"><button class="secondary" data-edit="${b.id}">Edit</button>${b.status!=='Cancelled'?`<button class="danger" data-cancel="${b.id}">Cancel</button>`:''}</div></td></tr>`).join(''):'<tr><td colspan="12" class="table-empty">No bookings match these filters.</td></tr>';
     $('bookingBody').querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>openBooking(b.dataset.edit));
     $('bookingBody').querySelectorAll('[data-cancel]').forEach(btn=>btn.onclick=()=>cancelBooking(btn.dataset.cancel));
   }
@@ -392,8 +413,10 @@
     if(b){
       $('bookingId').value=b.id;$('roomSelect').value=b.room;$('guestName').value=b.guestName;$('phone').value=b.phone||'';$('guestType').value=b.guestType||'Family';$('checkIn').value=b.checkIn;$('checkOut').value=b.checkOut;$('totalAmount').value=b.totalAmount;$('nightlyRate').value=b.nightlyRate??(b.totalAmount/Math.max(1,Math.ceil((parseDate(b.checkOut)-parseDate(b.checkIn))/86400000))/roomsOf(b).length);$('discountAmount').value=b.discountAmount||0;$('paidAmount').value=b.paidAmount;$('status').value=b.status||'Booked';$('paymentNote').value=b.paymentNote||'';$('notes').value=b.notes||'';$('deleteBookingBtn').style.display='inline-block';
       document.querySelectorAll('.room-check').forEach(c=>c.checked=roomsOf(b).includes(+c.value));
+      renderNidFields(nidsOf(b));
     }else{
       $('roomSelect').value=room;$('checkIn').value=selectedDate;$('checkOut').value=isoDate(new Date(parseDate(selectedDate).getTime()+86400000));$('totalAmount').value='';$('nightlyRate').value='';$('guestName').value='';$('phone').value='';$('notes').value='';$('paymentNote').value='';document.querySelectorAll('.room-check').forEach(c=>c.checked=(+c.value===+room));
+      renderNidFields(['']);
     }
     updateDue();$('bookingModal').classList.add('show');document.body.style.overflow='hidden';
   }
@@ -418,7 +441,7 @@
     if(!rooms.length){alert('Select at least one room.');return;}
     if(!checkIn||!checkOut||checkOut<=checkIn){alert('Check-out must be later than check-in.');return;}
     if(discount>nights*rate*rooms.length){if(!confirm('Discount is greater than the subtotal. Total will be ৳0. Continue?'))return;}
-    const b={id,room:rooms[0],rooms,guestName:$('guestName').value.trim(),phone:$('phone').value.trim(),guestType:$('guestType').value,checkIn,checkOut,nightlyRate:rate,discountAmount:discount,totalAmount,paidAmount:+$('paidAmount').value||0,status:$('status').value,paymentNote:$('paymentNote').value.trim(),notes:$('notes').value.trim()};
+    const b={id,room:rooms[0],rooms,guestName:$('guestName').value.trim(),phone:$('phone').value.trim(),guestType:$('guestType').value,nids:collectedNids(),checkIn,checkOut,nightlyRate:rate,discountAmount:discount,totalAmount,paidAmount:+$('paidAmount').value||0,status:$('status').value,paymentNote:$('paymentNote').value.trim(),notes:$('notes').value.trim()};
     if(b.paidAmount>b.totalAmount){if(!confirm('Received amount is greater than the booking total. Save anyway?'))return;}
     const collision=data.bookings.find(x=>x.id!==id&&active(x)&&roomsOf(x).some(r=>rooms.includes(r))&&x.checkIn<b.checkOut&&x.checkOut>b.checkIn);
     if(collision){$('overlapWarning').textContent=`Room overlap with ${collision.guestName}; booking not saved.`;alert(`Double booking blocked!
@@ -485,7 +508,7 @@ Selected room(s) overlap with ${collision.guestName} (Room ${roomsOf(collision).
     });
   };
   $('exportBtn').onclick=()=>{
-    const rows=[['Booking ID','Room(s)','Guest','Phone','Type','Check-in','Check-out','Rate/night','Discount','Total amount','Received','Due','Status','Payment note','Notes'],...data.bookings.map(b=>[b.id,roomsOf(b).join('|'),b.guestName,b.phone||'',b.guestType||'',b.checkIn,b.checkOut,b.nightlyRate??'',b.discountAmount||0,b.totalAmount,b.paidAmount,due(b),b.status,b.paymentNote||'',b.notes||''])];
+    const rows=[['Booking ID','Room(s)','Guest','Phone','NID(s)','Type','Check-in','Check-out','Rate/night','Discount','Total amount','Received','Due','Status','Payment note','Notes'],...data.bookings.map(b=>[b.id,roomsOf(b).join('|'),b.guestName,b.phone||'',nidsOf(b).join(' | '),b.guestType||'',b.checkIn,b.checkOut,b.nightlyRate??'',b.discountAmount||0,b.totalAmount,b.paidAmount,due(b),b.status,b.paymentNote||'',b.notes||''])];
     const csv=rows.map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\r\n');
     download(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'}),'resort-bookings.csv');toast('CSV exported');
   };
@@ -507,6 +530,13 @@ Selected room(s) overlap with ${collision.guestName} (Room ${roomsOf(collision).
       $('yearSelect').innerHTML=[...years].sort((a,b)=>a-b).map(y=>`<option value="${y}">${y}</option>`).join('');
       render();toast('Backup restored');
     }catch(e){alert('Could not read this backup file. Please select a valid JSON backup.');}
+  };
+  $('addNidBtn').onclick=()=>{
+    const cur=[...document.querySelectorAll('#nidList .nid-input')].map(el=>el.value);
+    cur.push('');
+    renderNidFields(cur);
+    const inputs=$('nidList').querySelectorAll('.nid-input');
+    if(inputs.length)inputs[inputs.length-1].focus();
   };
   $('signInBtn').onclick=signIn;$('authPassword').addEventListener('keydown',e=>{if(e.key==='Enter')signIn();});$('signOutBtn').onclick=signOut;
   load();setAuthScreen(true);initializeSupabase().catch(e=>{setAuthScreen(true);setAuthMessage(e.message||'Could not initialize Supabase.',true);});

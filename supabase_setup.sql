@@ -40,6 +40,7 @@ create table if not exists public.bookings (
   guest_name text not null check(length(trim(guest_name)) > 0),
   phone text not null default '',
   guest_type text not null default 'Family',
+  nids text[] not null default '{}',
   check_in date not null,
   check_out date not null,
   nightly_rate numeric(12,2) not null default 0 check(nightly_rate >= 0),
@@ -124,6 +125,7 @@ declare
   v_role text;
   v_id text := p_booking->>'id';
   v_rooms integer[];
+  v_nids text[];
   v_checkin date := (p_booking->>'check_in')::date;
   v_checkout date := (p_booking->>'check_out')::date;
   v_status text := coalesce(p_booking->>'status','Booked');
@@ -144,6 +146,11 @@ begin
   if cardinality(v_rooms)=0 then v_rooms := array[(p_booking->>'room')::integer]; end if;
   if exists(select 1 from unnest(v_rooms) r where r < 1 or r > 16) then raise exception 'Unknown room number'; end if;
   if (p_booking->>'guest_name') is null or length(trim(p_booking->>'guest_name'))=0 then raise exception 'Guest name is required'; end if;
+  select coalesce(array_agg(trim(value) order by ordinality),'{}'::text[])
+  into v_nids
+  from jsonb_array_elements_text(coalesce(p_booking->'nids','[]'::jsonb)) with ordinality as x(value, ordinality)
+  where length(trim(value)) > 0;
+  v_nids := coalesce(v_nids,'{}'::text[]);
 
   -- Serialize booking writes so concurrent staff cannot book the same room/date window.
   perform pg_advisory_xact_lock(hashtext('resort_booking_manager_room_inventory'));
@@ -161,11 +168,11 @@ begin
     ) then raise exception 'Double booking blocked: one or more rooms are already booked for these dates'; end if;
   end if;
 
-  insert into public.bookings(id,room,rooms,guest_name,phone,guest_type,check_in,check_out,nightly_rate,discount_amount,total_amount,paid_amount,status,payment_note,notes,resort_name,created_by,updated_by)
-  values(v_id, v_rooms[1], v_rooms, trim(p_booking->>'guest_name'), coalesce(p_booking->>'phone',''), coalesce(p_booking->>'guest_type','Family'), v_checkin, v_checkout,
+  insert into public.bookings(id,room,rooms,guest_name,phone,guest_type,nids,check_in,check_out,nightly_rate,discount_amount,total_amount,paid_amount,status,payment_note,notes,resort_name,created_by,updated_by)
+  values(v_id, v_rooms[1], v_rooms, trim(p_booking->>'guest_name'), coalesce(p_booking->>'phone',''), coalesce(p_booking->>'guest_type','Family'), v_nids, v_checkin, v_checkout,
     coalesce((p_booking->>'nightly_rate')::numeric,0),coalesce((p_booking->>'discount_amount')::numeric,0),coalesce((p_booking->>'total_amount')::numeric,0),v_new_paid,v_status,
     coalesce(p_booking->>'payment_note',''),coalesce(p_booking->>'notes',''),coalesce(p_booking->>'resort_name','Resort Booking Manager'),v_uid,v_uid)
-  on conflict(id) do update set room=excluded.room,rooms=excluded.rooms,guest_name=excluded.guest_name,phone=excluded.phone,guest_type=excluded.guest_type,
+  on conflict(id) do update set room=excluded.room,rooms=excluded.rooms,guest_name=excluded.guest_name,phone=excluded.phone,guest_type=excluded.guest_type,nids=excluded.nids,
     check_in=excluded.check_in,check_out=excluded.check_out,nightly_rate=excluded.nightly_rate,discount_amount=excluded.discount_amount,total_amount=excluded.total_amount,
     paid_amount=excluded.paid_amount,status=excluded.status,payment_note=excluded.payment_note,notes=excluded.notes,resort_name=excluded.resort_name,updated_by=v_uid,updated_at=now();
   select to_jsonb(b) into v_after from public.bookings b where b.id=v_id;
